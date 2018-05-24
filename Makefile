@@ -1,3 +1,10 @@
+# Test commands.
+#
+# make
+# ./start_qemu (Exit: Ctrl+a x)
+# make clean
+
+
 CROSS_PREFIX=/home/ryanyao/work/buildroot-2017.11-rc1/output/host/bin/aarch64-linux-gnu-
 
 all: test64.elf
