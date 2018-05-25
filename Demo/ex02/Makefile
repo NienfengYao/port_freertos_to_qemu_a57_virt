@@ -28,7 +28,7 @@ DEB_FLAG = -g -DDEBUG
 
 
 # Compiler/target path in FreeRTOS/Source/portable
-PORT_COMP_TARG = GCC/ARM_CA53_64_BIT
+PORT_COMP_TARG = GCC/ARM_CA53_64_BIT/
 
 # Intermediate directory for all *.o and other files:
 OBJDIR = obj/
@@ -36,11 +36,13 @@ OBJDIR = obj/
 # FreeRTOS source base directory
 FREERTOS_SRC = ../../FreeRTOS/Source/
 
+# Directory with memory management source files
+FREERTOS_MEMMANG_SRC = $(FREERTOS_SRC)portable/MemMang/
+
 # Directory with platform specific source files
 FREERTOS_PORT_SRC = $(FREERTOS_SRC)portable/$(PORT_COMP_TARG)
 
 
-# Object files to be linked into an application
 # Due to a large number, the .o files are arranged into logical groups:
 
 TEST_OBJS = test64.o startup64.o
@@ -60,10 +62,18 @@ FREERTOS_MEMMANG_OBJS = heap_1.o
 #FREERTOS_MEMMANG_OBJS = heap_4.o
 #FREERTOS_MEMMANG_OBJS = heap_5.o
 
+# FREERTOS_PORT_OBJS = port.o portISR.o
+FREERTOS_PORT_OBJS = port.o portASM.o
+# APP_OBJS = init.o main.o print.o receive.o
+APP_OBJS = main.o FreeRTOS_asm_vectors.o 
+# nostdlib.o must be commented out if standard lib is going to be linked!
+APP_OBJS += nostdlib.o
+
+
 # All object files specified above are prefixed the intermediate directory
 # OBJS = $(addprefix $(OBJDIR), $(STARTUP_OBJ) $(FREERTOS_OBJS) $(FREERTOS_MEMMANG_OBJS))
 # OBJS = $(addprefix $(OBJDIR), $(FREERTOS_OBJS) )
-OBJS = $(addprefix $(OBJDIR), $(FREERTOS_OBJS) $(TEST_OBJS))
+OBJS = $(addprefix $(OBJDIR), $(FREERTOS_OBJS) $(FREERTOS_MEMMANG_OBJS) $(TEST_OBJS) $(FREERTOS_PORT_OBJS) $(APP_OBJS))
 
 ELF_IMAGE = image.elf
 
@@ -97,6 +107,35 @@ $(OBJDIR)list.o : $(FREERTOS_SRC)list.c
 $(OBJDIR)tasks.o : $(FREERTOS_SRC)tasks.c
 	$(CC) $(CFLAG) $(CFLAGS) $(INC_FLAGS) $< $(OFLAG) $@
 
+
+# Rules for all MemMang implementations are provided
+# Only one of these object files must be linked to the final target
+
+$(OBJDIR)heap_1.o : $(FREERTOS_MEMMANG_SRC)heap_1.c
+	$(CC) $(CFLAG) $(CFLAGS) $(INC_FLAGS) $< $(OFLAG) $@
+
+$(OBJDIR)heap_2.o : $(FREERTOS_MEMMANG_SRC)heap_2.c
+	$(CC) $(CFLAG) $(CFLAGS) $(INC_FLAGS) $< $(OFLAG) $@
+
+$(OBJDIR)heap_3.o : $(FREERTOS_MEMMANG_SRC)heap_3.c
+	$(CC) $(CFLAG) $(CFLAGS) $(INC_FLAGS) $< $(OFLAG) $@
+
+$(OBJDIR)heap_4.o : $(FREERTOS_MEMMANG_SRC)heap_4.c
+	$(CC) $(CFLAG) $(CFLAGS) $(INC_FLAGS) $< $(OFLAG) $@
+
+$(OBJDIR)heap_5.o : $(FREERTOS_MEMMANG_SRC)heap_5.c
+	$(CC) $(CFLAG) $(CFLAGS) $(INC_FLAGS) $< $(OFLAG) $@
+
+
+# HW specific part, in FreeRTOS/Source/portable/$(PORT_COMP_TARGET)
+
+$(OBJDIR)port.o : $(FREERTOS_PORT_SRC)port.c
+	$(CC) $(CFLAG) $(CFLAGS) $(INC_FLAGS) $< $(OFLAG) $@
+
+$(OBJDIR)portASM.o : $(FREERTOS_PORT_SRC)portASM.S
+	$(AS) $(CFLAG) $(CFLAGS) $(INC_FLAGS) $< $(OFLAG) $@
+
+
 test64.elf: $(OBJDIR)test64.o $(OBJDIR)startup64.o
 	$(LD) -Ttest64.ld $^ $(OFLAG) $@
 
@@ -108,6 +147,19 @@ $(OBJDIR)startup64.o: startup64.s
 
 test64.bin: test64.elf
 	$(OBJCOPY) -O binary $< $@
+
+# Demo application
+
+$(OBJDIR)main.o : $(APP_SRC)main.c
+	$(CC) $(CFLAG) $(CFLAGS) $(INC_FLAGS) $< $(OFLAG) $@
+
+$(OBJDIR)nostdlib.o : $(APP_SRC)nostdlib.c
+	$(CC) $(CFLAG) $(CFLAGS) $< $(OFLAG) $@
+
+$(OBJDIR)FreeRTOS_asm_vectors.o : $(APP_SRC)FreeRTOS_asm_vectors.S
+	$(AS) $(CFLAG) $(CFLAGS) $< $(OFLAG) $@
+
+# Cleanup directives:
 
 clean:
 	rm -f test64.bin test64.elf image.elf

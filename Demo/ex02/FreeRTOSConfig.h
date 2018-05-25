@@ -28,7 +28,7 @@
 #ifndef FREERTOS_CONFIG_H
 #define FREERTOS_CONFIG_H
 
-#if 0 //RyanYao mark
+#if 0 //RyanYao
 #include "xparameters.h"
 #endif
 
@@ -75,8 +75,13 @@
 #define configTICK_RATE_HZ						( ( TickType_t ) 1000 )
 #define configPERIPHERAL_CLOCK_HZ  				( 33333000UL )
 #define configUSE_PREEMPTION					1
+#if 1 //RyanYao
+#define configUSE_IDLE_HOOK						0
+#define configUSE_TICK_HOOK						0
+#else
 #define configUSE_IDLE_HOOK						1
 #define configUSE_TICK_HOOK						1
+#endif 
 #define configMAX_PRIORITIES					( 8 )
 #define configMINIMAL_STACK_SIZE				( ( unsigned short ) 200 )
 #define configTOTAL_HEAP_SIZE					( 124 * 1024 )
@@ -85,15 +90,25 @@
 #define configIDLE_SHOULD_YIELD					1
 #define configUSE_MUTEXES						1
 #define configQUEUE_REGISTRY_SIZE				8
+#if 1 //RyanYao
+#define configCHECK_FOR_STACK_OVERFLOW			0
+#else
 #define configCHECK_FOR_STACK_OVERFLOW			2
+#endif
 #define configUSE_RECURSIVE_MUTEXES				1
+#if 1 //RyanYao
+#define configUSE_MALLOC_FAILED_HOOK			0
+#else
 #define configUSE_MALLOC_FAILED_HOOK			1
+#endif
 #define configUSE_APPLICATION_TASK_TAG			0
 #define configUSE_COUNTING_SEMAPHORES			1
 #define configUSE_QUEUE_SETS					1
 
 /* This demo creates RTOS objects using both static and dynamic allocation. */
+#if 0 //RyanYao
 #define configSUPPORT_STATIC_ALLOCATION			1
+#endif
 #define configSUPPORT_DYNAMIC_ALLOCATION		1 /* Defaults to 1 anyway. */
 
 /* Co-routine definitions. */
@@ -101,7 +116,9 @@
 #define configMAX_CO_ROUTINE_PRIORITIES 		( 2 )
 
 /* Software timer definitions. */
+#if 0 //RyanYao
 #define configUSE_TIMERS						1
+#endif
 #define configTIMER_TASK_PRIORITY				( configMAX_PRIORITIES - 1 )
 #define configTIMER_QUEUE_LENGTH				5
 #define configTIMER_TASK_STACK_DEPTH			( configMINIMAL_STACK_SIZE * 2 )
@@ -118,7 +135,9 @@ to exclude the API function. */
 #define INCLUDE_xTimerPendFunctionCall			1
 #define INCLUDE_eTaskGetState					1
 #define INCLUDE_xTaskAbortDelay					1
+#if 0 //RyanYao
 #define INCLUDE_xTaskGetHandle					1
+#endif
 
 /* This demo makes use of one or more example stats formatting functions.  These
 format the raw data provided by the uxTaskGetSystemState() function in to human
@@ -166,14 +185,20 @@ system. */
  * that is suitable for use on the Zynq MPU.  FreeRTOS_Tick_Handler() must
  * be installed as the peripheral's interrupt handler.
  */
+#if 0 //RyanYao
 void vConfigureTickInterrupt( void );
 #define configSETUP_TICK_INTERRUPT() vConfigureTickInterrupt()
 
 void vClearTickInterrupt( void );
 #define configCLEAR_TICK_INTERRUPT() vClearTickInterrupt()
+#endif
 
 /* The following constant describe the hardware, and are correct for the
 Zynq MPU. */
+#if 1 //RyanYao
+#define XPAR_PSU_ACPU_GIC_DIST_BASEADDR 0xF9010000
+#define XPAR_PSU_ACPU_GIC_BASEADDR 0xF9020000
+#endif
 #define configINTERRUPT_CONTROLLER_BASE_ADDRESS 		( XPAR_PSU_ACPU_GIC_DIST_BASEADDR )
 #define configINTERRUPT_CONTROLLER_CPU_INTERFACE_OFFSET ( XPAR_PSU_ACPU_GIC_BASEADDR - XPAR_PSU_ACPU_GIC_DIST_BASEADDR )
 #define configUNIQUE_INTERRUPT_PRIORITIES				32

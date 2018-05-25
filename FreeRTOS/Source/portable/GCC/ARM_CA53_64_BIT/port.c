@@ -44,9 +44,11 @@
 	#error configUNIQUE_INTERRUPT_PRIORITIES must be defined.  See http://www.freertos.org/Using-FreeRTOS-on-Cortex-A-Embedded-Processors.html
 #endif
 
+#if 0 //RyanYao
 #ifndef configSETUP_TICK_INTERRUPT
 	#error configSETUP_TICK_INTERRUPT() must be defined.  See http://www.freertos.org/Using-FreeRTOS-on-Cortex-A-Embedded-Processors.html
 #endif /* configSETUP_TICK_INTERRUPT */
+#endif
 
 #ifndef configMAX_API_CALL_INTERRUPT_PRIORITY
 	#error configMAX_API_CALL_INTERRUPT_PRIORITY must be defined.  See http://www.freertos.org/Using-FreeRTOS-on-Cortex-A-Embedded-Processors.html
@@ -265,6 +267,7 @@ StackType_t *pxPortInitialiseStack( StackType_t *pxTopOfStack, TaskFunction_t px
 
 BaseType_t xPortStartScheduler( void )
 {
+#if 0 //Ryan
 uint32_t ulAPSR;
 
 	#if( configASSERT_DEFINED == 1 )
@@ -338,6 +341,7 @@ uint32_t ulAPSR;
 		}
 	}
 
+#endif
 	return 0;
 }
 /*-----------------------------------------------------------*/
