@@ -6,8 +6,6 @@
 # ./start_qemu (Exit: Ctrl+a x)
 # make clean
 
-
-
 TOOLCHAIN = aarch64-linux-gnu-
 CC = $(TOOLCHAIN)gcc
 CXX = $(TOOLCHAIN)g++
@@ -34,14 +32,18 @@ PORT_COMP_TARG = GCC/ARM_CA53_64_BIT
 
 # Intermediate directory for all *.o and other files:
 OBJDIR = obj/
-# OBJDIR = 
 
 # FreeRTOS source base directory
-FREERTOS_SRC = FreeRTOS/Source/
+FREERTOS_SRC = ../../FreeRTOS/Source/
+
+# Directory with platform specific source files
+FREERTOS_PORT_SRC = $(FREERTOS_SRC)portable/$(PORT_COMP_TARG)
 
 
 # Object files to be linked into an application
 # Due to a large number, the .o files are arranged into logical groups:
+
+TEST_OBJS = test64.o startup64.o
 
 FREERTOS_OBJS = queue.o list.o tasks.o
 # The following o. files are only necessary if
@@ -60,14 +62,43 @@ FREERTOS_MEMMANG_OBJS = heap_1.o
 
 # All object files specified above are prefixed the intermediate directory
 # OBJS = $(addprefix $(OBJDIR), $(STARTUP_OBJ) $(FREERTOS_OBJS) $(FREERTOS_MEMMANG_OBJS))
-OBJS = $(addprefix $(OBJDIR), test64.o startup64.o)
+# OBJS = $(addprefix $(OBJDIR), $(FREERTOS_OBJS) )
+OBJS = $(addprefix $(OBJDIR), $(FREERTOS_OBJS) $(TEST_OBJS))
 
-ELF_IMAGE = test64.elf
+ELF_IMAGE = image.elf
 
-all: $(OBJDIR) $(ELF_IMAGE)
+# Include paths to be passed to $(CC) where necessary
+INC_FREERTOS = $(FREERTOS_SRC)include/
+# INC_DRIVERS = $(DRIVERS_SRC)include/
+
+# Complete include flags to be passed to $(CC) where necessary
+# INC_FLAGS = $(INCLUDEFLAG)$(INC_FREERTOS) $(INCLUDEFLAG)$(APP_SRC) $(INCLUDEFLAG)$(FREERTOS_PORT_SRC)
+INC_FLAGS = $(INCLUDEFLAG)$(INC_FREERTOS) $(INCLUDEFLAG). $(INCLUDEFLAG)$(FREERTOS_PORT_SRC)
+# INC_FLAG_DRIVERS = $(INCLUDEFLAG)$(INC_DRIVERS)
+
+# all: $(OBJDIR) test64.elf $(ELF_IMAGE) 
+# all: $(OBJDIR) test64.elf 
+all: $(OBJDIR) $(ELF_IMAGE) 
 
 $(OBJDIR) :
 	mkdir -p $@
+
+$(ELF_IMAGE): $(OBJS)
+	$(LD) -nostdlib -T test64.ld $^ $(OFLAG) $@
+
+# FreeRTOS core
+
+$(OBJDIR)queue.o : $(FREERTOS_SRC)queue.c
+	$(CC) $(CFLAG) $(CFLAGS) $(INC_FLAGS) $< $(OFLAG) $@
+
+$(OBJDIR)list.o : $(FREERTOS_SRC)list.c
+	$(CC) $(CFLAG) $(CFLAGS) $(INC_FLAGS) $< $(OFLAG) $@
+
+$(OBJDIR)tasks.o : $(FREERTOS_SRC)tasks.c
+	$(CC) $(CFLAG) $(CFLAGS) $(INC_FLAGS) $< $(OFLAG) $@
+
+test64.elf: $(OBJDIR)test64.o $(OBJDIR)startup64.o
+	$(LD) -Ttest64.ld $^ $(OFLAG) $@
 
 $(OBJDIR)test64.o: test64.c
 	$(CC) $(CFLAG) $(CFLAGS) $< $(OFLAG) $@
@@ -75,12 +106,9 @@ $(OBJDIR)test64.o: test64.c
 $(OBJDIR)startup64.o: startup64.s
 	$(AS) $(CPUFLAG) $< $(OFLAG) $@
 
-$(ELF_IMAGE): $(OBJS)
-	$(LD) -nostdlib -T test64.ld $^ $(OFLAG) $@
-
 test64.bin: test64.elf
 	$(OBJCOPY) -O binary $< $@
 
 clean:
-	rm -f test64.bin test64.elf
-	rm -r $(OBJDIR)
+	rm -f test64.bin test64.elf image.elf
+	rm -rf $(OBJDIR)
