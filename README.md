@@ -16,15 +16,15 @@
 
 # Reference:
 *	FreeRTOS-GCC-ARM926ejs
-	*	ARM9EJ-S Technical Reference Manual - DDI0222 (http://infocenter.arm.com/help/topic/com.arm.doc.ddi0222b/DDI0222.pdf)
-	*	ARM926 interrupts in QEMU (https://balau82.wordpress.com/2012/04/15/arm926-interrupts-in-qemu/)
-	*	Building Bare-Metal ARM Systems with GNU: Part 2 (https://www.embedded.com/design/mcus-processors-and-socs/4026075/Building-Bare-Metal-ARM-Systems-with-GNU-Part-2)
-	*	Writing ARM Assembly Language (http://www.keil.com/support/man/docs/armasm/armasm_dom1359731144635.htm)
-	*	ARM Architecture Reference Manual (https://www.scss.tcd.ie/~waldroj/3d1/arm_arm.pdf)
+	*	[ARM9EJ-S Technical Reference Manual - DDI0222](http://infocenter.arm.com/help/topic/com.arm.doc.ddi0222b/DDI0222.pdf)
+	*	[ARM926 interrupts in QEMU](https://balau82.wordpress.com/2012/04/15/arm926-interrupts-in-qemu/)
+	*	[Building Bare-Metal ARM Systems with GNU: Part 2](https://www.embedded.com/design/mcus-processors-and-socs/4026075/Building-Bare-Metal-ARM-Systems-with-GNU-Part-2)
+	*	[Writing ARM Assembly Language](http://www.keil.com/support/man/docs/armasm/armasm_dom1359731144635.htm)
+	*	[ARM Architecture Reference Manual](https://www.scss.tcd.ie/~waldroj/3d1/arm_arm.pdf)
 *	QEMU
-	*	QEMU version 2.12.50 User Documentation (https://qemu.weilnetz.de/doc/qemu-doc.html)
+	*	[QEMU version 2.12.50 User Documentation](https://qemu.weilnetz.de/doc/qemu-doc.html)
 *	GCC Tools
-	*	GCC Command-Line Options (http://tigcc.ticalc.org/doc/comopts.html)
-	*	GNU 的連結工具 (ld, nm, objdump, ar) (http://sp1.wikidot.com/gnulinker)
+	*	[GCC Command-Line Options](http://tigcc.ticalc.org/doc/comopts.html)
+	*	[GNU 的連結工具 (ld, nm, objdump, ar)](http://sp1.wikidot.com/gnulinker)
 *	FreeRTOS
-	*	FreeRTOS Tutorial (http://socialledge.com/sjsu/index.php/FreeRTOS_Tutorial)
+	*	[FreeRTOS Tutorial](http://socialledge.com/sjsu/index.php/FreeRTOS_Tutorial)
