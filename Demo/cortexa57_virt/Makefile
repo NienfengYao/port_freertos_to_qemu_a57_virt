@@ -19,8 +19,8 @@ CFLAG = -c
 OFLAG = -o
 INCLUDEFLAG = -I
 CPUFLAG = -mcpu=cortex-a57
-WFLAG = -Wall -Wextra -Werror
-WFLAG = 
+WFLAG = -Wall -Wextra -Werror -fno-builtin
+# WFLAG = -Wall -Wextra -fno-builtin
 CFLAGS = $(CPUFLAG) $(WFLAG)
 
 # Additional C compiler flags to produce debugging symbols
@@ -42,6 +42,8 @@ FREERTOS_MEMMANG_SRC = $(FREERTOS_SRC)portable/MemMang/
 # Directory with platform specific source files
 FREERTOS_PORT_SRC = $(FREERTOS_SRC)portable/$(PORT_COMP_TARG)
 
+# Directory with HW drivers' source files
+DRIVERS_SRC = drivers/ 
 
 # Due to a large number, the .o files are arranged into logical groups:
 
@@ -64,27 +66,30 @@ FREERTOS_MEMMANG_OBJS = heap_1.o
 
 # FREERTOS_PORT_OBJS = port.o portISR.o
 FREERTOS_PORT_OBJS = port.o portASM.o
+DRIVERS_OBJS = print.o
+
 # APP_OBJS = init.o main.o print.o receive.o
 APP_OBJS = main.o FreeRTOS_asm_vectors.o 
 # nostdlib.o must be commented out if standard lib is going to be linked!
-APP_OBJS += nostdlib.o
+# APP_OBJS += nostdlib.o
 
 
 # All object files specified above are prefixed the intermediate directory
 # OBJS = $(addprefix $(OBJDIR), $(STARTUP_OBJ) $(FREERTOS_OBJS) $(FREERTOS_MEMMANG_OBJS))
 # OBJS = $(addprefix $(OBJDIR), $(FREERTOS_OBJS) )
-OBJS = $(addprefix $(OBJDIR), $(FREERTOS_OBJS) $(FREERTOS_MEMMANG_OBJS) $(TEST_OBJS) $(FREERTOS_PORT_OBJS) $(APP_OBJS))
+# OBJS = $(addprefix $(OBJDIR), $(FREERTOS_OBJS) $(FREERTOS_MEMMANG_OBJS) $(TEST_OBJS) $(FREERTOS_PORT_OBJS) $(APP_OBJS))
+OBJS = $(addprefix $(OBJDIR), $(FREERTOS_OBJS) $(FREERTOS_MEMMANG_OBJS) $(TEST_OBJS) $(FREERTOS_PORT_OBJS) $(DRIVERS_OBJS) $(APP_OBJS))
 
 ELF_IMAGE = image.elf
 
 # Include paths to be passed to $(CC) where necessary
 INC_FREERTOS = $(FREERTOS_SRC)include/
-# INC_DRIVERS = $(DRIVERS_SRC)include/
+INC_DRIVERS = $(DRIVERS_SRC)include/
 
 # Complete include flags to be passed to $(CC) where necessary
 # INC_FLAGS = $(INCLUDEFLAG)$(INC_FREERTOS) $(INCLUDEFLAG)$(APP_SRC) $(INCLUDEFLAG)$(FREERTOS_PORT_SRC)
 INC_FLAGS = $(INCLUDEFLAG)$(INC_FREERTOS) $(INCLUDEFLAG). $(INCLUDEFLAG)$(FREERTOS_PORT_SRC)
-# INC_FLAG_DRIVERS = $(INCLUDEFLAG)$(INC_DRIVERS)
+INC_FLAG_DRIVERS = $(INCLUDEFLAG)$(INC_DRIVERS)
 
 # all: $(OBJDIR) test64.elf $(ELF_IMAGE) 
 # all: $(OBJDIR) test64.elf 
@@ -125,6 +130,15 @@ $(OBJDIR)heap_4.o : $(FREERTOS_MEMMANG_SRC)heap_4.c
 
 $(OBJDIR)heap_5.o : $(FREERTOS_MEMMANG_SRC)heap_5.c
 	$(CC) $(CFLAG) $(CFLAGS) $(INC_FLAGS) $< $(OFLAG) $@
+ 
+
+# Drivers
+
+# $(OBJDIR)print.o : $(DRIVERS_SRC)print.c $(DEP_BSP)
+# $(OBJDIR)print.o : $(DRIVERS_SRC)print.c
+$(OBJDIR)print.o : drivers/print.c
+	# $(CC) $(CFLAG) $(CFLAGS) $(INC_FLAG_DRIVERS) $< $(OFLAG) $@
+	$(CC) $(CFLAG) $(CFLAGS) $< $(OFLAG) $@
 
 
 # HW specific part, in FreeRTOS/Source/portable/$(PORT_COMP_TARGET)
@@ -133,7 +147,7 @@ $(OBJDIR)port.o : $(FREERTOS_PORT_SRC)port.c
 	$(CC) $(CFLAG) $(CFLAGS) $(INC_FLAGS) $< $(OFLAG) $@
 
 $(OBJDIR)portASM.o : $(FREERTOS_PORT_SRC)portASM.S
-	$(AS) $(CFLAG) $(CFLAGS) $(INC_FLAGS) $< $(OFLAG) $@
+	$(AS) $(CPUFLAG) $< $(OFLAG) $@
 
 
 test64.elf: $(OBJDIR)test64.o $(OBJDIR)startup64.o
@@ -157,7 +171,7 @@ $(OBJDIR)nostdlib.o : $(APP_SRC)nostdlib.c
 	$(CC) $(CFLAG) $(CFLAGS) $< $(OFLAG) $@
 
 $(OBJDIR)FreeRTOS_asm_vectors.o : $(APP_SRC)FreeRTOS_asm_vectors.S
-	$(AS) $(CFLAG) $(CFLAGS) $< $(OFLAG) $@
+	$(AS) $(CPUFLAG) $< $(OFLAG) $@
 
 # Cleanup directives:
 

@@ -70,7 +70,9 @@
 /*
  * Configure the hardware as necessary to run this demo.
  */
+#if 0 //RyanYao
 static void prvSetupHardware( void );
+#endif
 
 /*
  * See the comments at the top of this file and above the
@@ -90,6 +92,8 @@ void vApplicationMallocFailedHook( void );
 void vApplicationIdleHook( void );
 void vApplicationStackOverflowHook( TaskHandle_t pxTask, char *pcTaskName );
 void vApplicationTickHook( void );
+
+extern void printk(const char *fmt, ...);
 
 /*-----------------------------------------------------------*/
 #if 0 //RyanYao mark
@@ -258,8 +262,8 @@ static StackType_t uxTimerTaskStack[ configTIMER_TASK_STACK_DEPTH ];
 
 void vMainAssertCalled( const char *pcFileName, uint32_t ulLineNumber )
 {
-	#if 0 //RyanYao
-	xil_printf( "ASSERT!  Line %lu of file %s\r\n", ulLineNumber, pcFileName );
+	#if 1 //RyanYao
+	printk( "ASSERT!  Line %lu of file %s\r\n", ulLineNumber, pcFileName );
 	#endif
 	
 	taskENTER_CRITICAL();
@@ -269,6 +273,26 @@ void vMainAssertCalled( const char *pcFileName, uint32_t ulLineNumber )
 #if 1 //RyanYao add
 void vApplicationIRQHandler( uint32_t ulICCIAR )
 {
-
+	printk( "vApplicationIRQHandler!  ulICCIAR=%x\n", ulICCIAR);
 }
 #endif
+
+
+void hello_world_task(void *p)
+{
+	while(1) {
+		printk("Hello World Task! p=%x", p);
+		//vTaskDelay(1000);
+	}
+}
+
+int main(void)
+{
+	/* Create Tasks */
+	xTaskCreate(hello_world_task, "hello_task", 2048, 0, 1, 0);
+
+	/* Start the scheduler */	
+	vTaskStartScheduler();
+
+	return -1;
+}
