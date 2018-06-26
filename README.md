@@ -23,8 +23,9 @@
 	*	[ARM Architecture Reference Manual](https://www.scss.tcd.ie/~waldroj/3d1/arm_arm.pdf)
 *	QEMU
 	*	[QEMU version 2.12.50 User Documentation](https://qemu.weilnetz.de/doc/qemu-doc.html)
-*	GCC Tools
-	*	[GCC Command-Line Options](http://tigcc.ticalc.org/doc/comopts.html)
+*	Makefile
+	*	[Makefile範例教學](http://maxubuntu.blogspot.com/2010/02/makefile.html)
 	*	[GNU 的連結工具 (ld, nm, objdump, ar)](http://sp1.wikidot.com/gnulinker)
+	*	[GCC Command-Line Options](http://tigcc.ticalc.org/doc/comopts.html)
 *	FreeRTOS
 	*	[FreeRTOS Tutorial](http://socialledge.com/sjsu/index.php/FreeRTOS_Tutorial)

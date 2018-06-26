@@ -1,25 +1,55 @@
 # Test commands.
-#
-# make
-# ./start_qemu (Exit: Ctrl+a x)
-# make clean
+#	make run
+
+CROSS = aarch64-linux-gnu
+CC = ${CROSS}-gcc
+AS = ${CROSS}-as
+LD = ${CROSS}-ld
+OBJDUMP = ${CROSS}-objdump
+#CFLAGS =  -mcpu=cortex-a57 -fpic -ffreestanding -std=gnu99 -O2 -Wall -Wextra
+CFLAGS =  -mcpu=cortex-a57 -fpic -ffreestanding -std=gnu99 -Wall -Wextra
+#	-mcpu=name
+#		Specify the name of the target processor
+#	-fpic
+#		Generate position-independent code (PIC) suitable for use in a shared 
+#		library, if supported for the target machine.
+#	-ffreestanding
+#		Assert that compilation targets a freestanding environment.  This 
+#		implies -fno-builtin.  A freestanding environment is one in which the 
+#		standard library may not exist, and program startup may not necessarily
+#		be at "main".
+#	-Wall
+#		Turns on all optional warnings which are desirable for normal code
+#	-Wextra
+#		This enables some extra warning flags that are not enabled by -Wall
+ASM_FLAGS = -mcpu=cortex-a57
+OBJS = boot.o kernel.o
+
+kernel.elf: ${OBJS}
+    #${CC} -Wl,--build-id=none -T linker.ld -o $@ -ffreestanding -O2 -nostdlib ${OBJ}
+	${LD} -Tlinker.ld $^ -o $@
+	${OBJDUMP} -D kernel.elf > kernel.list
+
+boot.o: boot.S
+	${AS} ${ASM_FLAGS} -c $< -o $@
+
+#%.o : %.c Makefile
+%.o : %.c
+	$(CC) ${CFLAGS} -c $<
 
 
-CROSS_PREFIX=/home/ryanyao/work/buildroot-2017.11-rc1/output/host/bin/aarch64-linux-gnu-
+run:
+	$(MAKE) kernel.elf
+	# qemu-system-aarch64 -M virt -cpu cortex-a57 -m 128 -serial stdio -nographic -nodefaults -kernel kernel.elf
+	qemu-system-aarch64 -M virt -cpu cortex-a57 -nographic -kernel kernel.elf
 
-all: test64.elf
+gen_tags:
+	./gen_tags.sh
 
-test64.o: test64.c
-	$(CROSS_PREFIX)gcc -c $< -o $@
-
-startup64.o: startup64.s
-	$(CROSS_PREFIX)as -c $< -o $@
-
-test64.elf: test64.o startup64.o
-	$(CROSS_PREFIX)ld -Ttest64.ld $^ -o $@
-
-test64.bin: test64.elf
-	$(CROSS_PREFIX)objcopy -O binary $< $@
+clean_tags:
+	rm -rf tags cscope*
 
 clean:
-	rm -f test64.bin test64.elf startup64.o test64.o
+	rm -f *.o *.elf *.list
+
+.PHONY: run gen_tags clean_tags clean
