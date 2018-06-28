@@ -27,5 +27,10 @@
 	*	[Makefile範例教學](http://maxubuntu.blogspot.com/2010/02/makefile.html)
 	*	[GNU 的連結工具 (ld, nm, objdump, ar)](http://sp1.wikidot.com/gnulinker)
 	*	[GCC Command-Line Options](http://tigcc.ticalc.org/doc/comopts.html)
+	*	[LD Index](https://sourceware.org/binutils/docs/ld/LD-Index.html#LD-Index)
 *	FreeRTOS
 	*	[FreeRTOS Tutorial](http://socialledge.com/sjsu/index.php/FreeRTOS_Tutorial)
+*	GDB
+	*	[GNU GDB Debugger Command Cheat Sheet](http://www.yolinux.com/TUTORIALS/GDB-Commands.html)
+	*	[Debugging with GDB （入門篇）](http://www.study-area.org/goldencat/debug.htm)
+	*	[Use Qemu GDB to forcely debug Linux early boot process ](https://mudongliang.github.io/2017/09/21/use-qemu-gdb-to-forcely-debug-linux-early-boot-process.html)
