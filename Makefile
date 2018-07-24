@@ -71,7 +71,7 @@ DRIVERS_OBJS = uart.o
 
 # APP_OBJS = init.o main.o print.o receive.o
 # APP_OBJS = main.o FreeRTOS_asm_vectors.o
-APP_OBJS = kernel.o boot.o
+APP_OBJS = kernel.o start.o FreeRTOS_asm_vectors.o
 # nostdlib.o must be commented out if standard lib is going to be linked!
 # APP_OBJS += nostdlib.o
 
@@ -86,11 +86,12 @@ $(info $(APP_SRC))
 # Include paths to be passed to $(CC) where necessary
 INC_FREERTOS = $(FREERTOS_SRC)include/
 INC_DRIVERS = $(DRIVERS_SRC)include/
+INC_APP = $(APP_SRC)include/
 
 # Complete include flags to be passed to $(CC) where necessary
 # INC_FLAGS = $(INCLUDEFLAG)$(INC_FREERTOS) $(INCLUDEFLAG)$(APP_SRC) $(INCLUDEFLAG)$(FREERTOS_PORT_SRC)
 # INC_FLAGS = $(INCLUDEFLAG)$(INC_FREERTOS) $(INCLUDEFLAG). $(INCLUDEFLAG)$(FREERTOS_PORT_SRC)
-INC_FLAGS = $(INCLUDEFLAG)$(APP_SRC) $(INCLUDEFLAG)$(INC_DRIVERS)
+INC_FLAGS = $(INCLUDEFLAG)$(INC_APP) $(INCLUDEFLAG)$(INC_DRIVERS)
 INC_FLAG_DRIVERS = $(INCLUDEFLAG)$(INC_DRIVERS)
 
 
@@ -113,16 +114,18 @@ $(OBJDIR)uart.o : $(DRIVERS_SRC)uart.c
 
 # Demo application
 
-$(OBJDIR)boot.o : $(APP_SRC)boot.S
+$(OBJDIR)start.o : $(APP_SRC)start.S
+	$(CC) $(CFLAG) $(CFLAGS) $(INC_FLAGS) $< $(OFLAG) $@
+
+$(OBJDIR)FreeRTOS_asm_vectors.o : $(APP_SRC)FreeRTOS_asm_vectors.S
 	$(CC) $(CFLAG) $(CFLAGS) $(INC_FLAGS) $< $(OFLAG) $@
 
 $(OBJDIR)kernel.o: $(APP_SRC)kernel.c
 	$(CC) $(CFLAG) $(CFLAGS) $(INC_FLAGS) $< -o $@
 
 run:
-	$(MAKE) kernel.elf
+	$(MAKE) all
 	# qemu-system-aarch64 -machine virt -cpu cortex-a57 -m 128 -serial stdio -nographic -nodefaults -kernel kernel.elf
-	# qemu-system-aarch64 -machine virt,gic_version=3 -cpu cortex-a57 -nographic -kernel kernel.elf
 	qemu-system-aarch64 -machine virt -cpu cortex-a57 -nographic -kernel kernel.elf
 
 gen_tags:

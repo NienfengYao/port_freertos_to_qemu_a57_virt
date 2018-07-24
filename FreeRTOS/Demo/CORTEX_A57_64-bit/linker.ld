@@ -1,4 +1,4 @@
-ENTRY(_start)
+ENTRY(_boot)
 
 STACKTOP = 0x41000000;
 
