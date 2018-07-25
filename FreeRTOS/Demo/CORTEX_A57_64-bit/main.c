@@ -20,7 +20,6 @@ void vMainAssertCalled( const char *pcFileName, uint32_t ulLineNumber )
 	for( ;; );
 }
 
-#if 1
 void hello_world_task(void *p)
 {
 	while(1) {
@@ -28,15 +27,12 @@ void hello_world_task(void *p)
 		//vTaskDelay(1000);
 	}
 }
-#endif
 
 int main(void)
 {
 	uart_puts("Hello World!\n");
-
 	//configASSERT(0);
 
-	#if 1 //Ryan
 	/* Create Tasks */
 	uart_puts("1!\n");
 	xTaskCreate(hello_world_task, "hello_task", 2048, 0, 1, 0);
@@ -45,7 +41,6 @@ int main(void)
 	/* Start the scheduler */	
 	vTaskStartScheduler();
 	uart_puts("3!\n");
-	#endif
 
 	return -1;
 }

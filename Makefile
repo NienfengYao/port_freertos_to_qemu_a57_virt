@@ -69,7 +69,8 @@ DRIVERS_OBJS = uart.o
 # APP_OBJS = init.o main.o print.o receive.o
 # APP_OBJS = main.o FreeRTOS_asm_vectors.o
 # APP_OBJS = kernel.o start.o FreeRTOS_asm_vectors.o
-APP_OBJS = main.o start.o FreeRTOS_asm_vectors.o FreeRTOS_tick_config.o vectors.o
+APP_OBJS = main.o start.o FreeRTOS_asm_vectors.o FreeRTOS_tick_config.o
+APP_OBJS += vectors.o exception.o
 # nostdlib.o must be commented out if standard lib is going to be linked!
 APP_OBJS += nostdlib.o
 
@@ -160,6 +161,9 @@ $(OBJDIR)FreeRTOS_tick_config.o : $(APP_SRC)FreeRTOS_tick_config.c
 	$(CC) $(CFLAG) $(CFLAGS) $(INC_FLAGS) $< $(OFLAG) $@
 
 $(OBJDIR)vectors.o : $(APP_SRC)vectors.c
+	$(CC) $(CFLAG) $(CFLAGS) $(INC_FLAGS) $< $(OFLAG) $@
+
+$(OBJDIR)exception.o : $(APP_SRC)exception.c
 	$(CC) $(CFLAG) $(CFLAGS) $(INC_FLAGS) $< $(OFLAG) $@
 
 $(OBJDIR)main.o: $(APP_SRC)main.c

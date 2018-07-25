@@ -10,8 +10,9 @@ SECTIONS
 	__text_start = .;
 	.text :
 	{
-	KEEP(*(.text.boot))
-	*(.text)
+		KEEP(*(.vectors))
+		KEEP(*(.text.boot))
+		*(.text)
 	}
 	. = ALIGN(4096); /* align to page size */
 	__text_end = .;
@@ -19,7 +20,7 @@ SECTIONS
 	__data_start = .;
 	.data :
 	{
-	*(.data)
+		*(.data)
 	}
 	. = ALIGN(4096); /* align to page size */
 	__data_end = .;
@@ -27,8 +28,8 @@ SECTIONS
 	__bss_start = .;
 	.bss :
 	{
-	bss = .;
-	*(.bss)
+		bss = .;
+		*(.bss)
 	}
 	. = ALIGN(4096); /* align to page size */
 	__bss_end = .;
