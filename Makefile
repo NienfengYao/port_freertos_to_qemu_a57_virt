@@ -2,9 +2,6 @@
 #	make run
 #	Ctrl-A X (Exit)
 
-
-IMAGE := kernel.elf
-
 # GCC flags
 CFLAG = -c
 OFLAG = -o
@@ -14,7 +11,7 @@ CC = ${CROSS}-gcc
 AS = ${CROSS}-as
 LD = ${CROSS}-ld
 OBJDUMP = ${CROSS}-objdump
-CFLAGS =  -mcpu=cortex-a57 -Wall -Wextra -g
+CFLAGS = -mcpu=cortex-a57 -Wall -Wextra -g
 #	-mcpu=name
 #		Specify the name of the target processor
 #	-Wall
@@ -71,14 +68,15 @@ DRIVERS_OBJS = uart.o
 
 # APP_OBJS = init.o main.o print.o receive.o
 # APP_OBJS = main.o FreeRTOS_asm_vectors.o
-APP_OBJS = kernel.o start.o FreeRTOS_asm_vectors.o
+# APP_OBJS = kernel.o start.o FreeRTOS_asm_vectors.o
+APP_OBJS = main.o start.o FreeRTOS_asm_vectors.o FreeRTOS_tick_config.o vectors.o
 # nostdlib.o must be commented out if standard lib is going to be linked!
-# APP_OBJS += nostdlib.o
+APP_OBJS += nostdlib.o
 
 
 # All object files specified above are prefixed the intermediate directory
 # OBJS = $(addprefix $(OBJDIR), $(FREERTOS_OBJS) $(FREERTOS_MEMMANG_OBJS) $(TEST_OBJS) $(FREERTOS_PORT_OBJS) $(DRIVERS_OBJS) $(APP_OBJS))
-OBJS = $(addprefix $(OBJDIR), $(DRIVERS_OBJS) $(APP_OBJS) )
+OBJS = $(addprefix $(OBJDIR), $(FREERTOS_OBJS) $(FREERTOS_MEMMANG_OBJS) $(FREERTOS_PORT_OBJS) $(DRIVERS_OBJS) $(APP_OBJS) )
 
 ELF_IMAGE = image.elf
 
@@ -91,42 +89,86 @@ INC_APP = $(APP_SRC)include/
 # Complete include flags to be passed to $(CC) where necessary
 # INC_FLAGS = $(INCLUDEFLAG)$(INC_FREERTOS) $(INCLUDEFLAG)$(APP_SRC) $(INCLUDEFLAG)$(FREERTOS_PORT_SRC)
 # INC_FLAGS = $(INCLUDEFLAG)$(INC_FREERTOS) $(INCLUDEFLAG). $(INCLUDEFLAG)$(FREERTOS_PORT_SRC)
-INC_FLAGS = $(INCLUDEFLAG)$(INC_APP) $(INCLUDEFLAG)$(INC_DRIVERS)
+INC_FLAGS = $(INCLUDEFLAG)$(INC_FREERTOS) $(INCLUDEFLAG)$(INC_APP) $(INCLUDEFLAG)$(INC_DRIVERS) $(INCLUDEFLAG)$(FREERTOS_PORT_SRC)
 INC_FLAG_DRIVERS = $(INCLUDEFLAG)$(INC_DRIVERS)
 
 
-all: $(OBJDIR) $(IMAGE)
+all: $(OBJDIR) $(ELF_IMAGE)
 
 $(OBJDIR) :
 	mkdir -p $@
 
-all: $(IMAGE)
-
-${IMAGE}: $(APP_SRC)linker.ld ${OBJS}
+${ELF_IMAGE}: $(APP_SRC)linker.ld ${OBJS}
 	${LD} -T $(APP_SRC)linker.ld $^ -o $@
-	${OBJDUMP} -D kernel.elf > kernel.list
+	${OBJDUMP} -D $(ELF_IMAGE) > image.list
+
+# FreeRTOS core
+
+$(OBJDIR)queue.o : $(FREERTOS_SRC)queue.c
+	$(CC) $(CFLAG) $(CFLAGS) $(INC_FLAGS) $< $(OFLAG) $@
+
+$(OBJDIR)list.o : $(FREERTOS_SRC)list.c
+	$(CC) $(CFLAG) $(CFLAGS) $(INC_FLAGS) $< $(OFLAG) $@
+
+$(OBJDIR)tasks.o : $(FREERTOS_SRC)tasks.c
+	$(CC) $(CFLAG) $(CFLAGS) $(INC_FLAGS) $< $(OFLAG) $@
+
+# Rules for all MemMang implementations are provided
+# Only one of these object files must be linked to the final target
+
+$(OBJDIR)heap_1.o : $(FREERTOS_MEMMANG_SRC)heap_1.c
+	$(CC) $(CFLAG) $(CFLAGS) $(INC_FLAGS) $< $(OFLAG) $@
+
+$(OBJDIR)heap_2.o : $(FREERTOS_MEMMANG_SRC)heap_2.c
+	$(CC) $(CFLAG) $(CFLAGS) $(INC_FLAGS) $< $(OFLAG) $@
+
+$(OBJDIR)heap_3.o : $(FREERTOS_MEMMANG_SRC)heap_3.c
+	$(CC) $(CFLAG) $(CFLAGS) $(INC_FLAGS) $< $(OFLAG) $@
+
+$(OBJDIR)heap_4.o : $(FREERTOS_MEMMANG_SRC)heap_4.c
+	$(CC) $(CFLAG) $(CFLAGS) $(INC_FLAGS) $< $(OFLAG) $@
+
+$(OBJDIR)heap_5.o : $(FREERTOS_MEMMANG_SRC)heap_5.c
+	$(CC) $(CFLAG) $(CFLAGS) $(INC_FLAGS) $< $(OFLAG) $@
 
 # Drivers
 
 $(OBJDIR)uart.o : $(DRIVERS_SRC)uart.c
-	# $(CC) $(CFLAG) $(CFLAGS) $(INC_FLAG_DRIVERS) $< $(OFLAG) $@
 	$(CC) $(CFLAG) $(CFLAGS) $(INC_FLAG_DRIVERS) $< $(OFLAG) $@
 
+# HW specific part, in FreeRTOS/Source/portable/$(PORT_COMP_TARGET)
+
+$(OBJDIR)port.o : $(FREERTOS_PORT_SRC)port.c
+	$(CC) $(CFLAG) $(CFLAGS) $(INC_FLAGS) $< $(OFLAG) $@
+
+$(OBJDIR)portASM.o : $(FREERTOS_PORT_SRC)portASM.S
+	$(AS) $(CPUFLAG) $< $(OFLAG) $@
+
 # Demo application
+
 
 $(OBJDIR)start.o : $(APP_SRC)start.S
 	$(CC) $(CFLAG) $(CFLAGS) $(INC_FLAGS) $< $(OFLAG) $@
 
+$(OBJDIR)nostdlib.o : $(APP_SRC)nostdlib.c
+	$(CC) $(CFLAG) $(CFLAGS) $< $(OFLAG) $@
+
 $(OBJDIR)FreeRTOS_asm_vectors.o : $(APP_SRC)FreeRTOS_asm_vectors.S
 	$(CC) $(CFLAG) $(CFLAGS) $(INC_FLAGS) $< $(OFLAG) $@
 
-$(OBJDIR)kernel.o: $(APP_SRC)kernel.c
+$(OBJDIR)FreeRTOS_tick_config.o : $(APP_SRC)FreeRTOS_tick_config.c
+	$(CC) $(CFLAG) $(CFLAGS) $(INC_FLAGS) $< $(OFLAG) $@
+
+$(OBJDIR)vectors.o : $(APP_SRC)vectors.c
+	$(CC) $(CFLAG) $(CFLAGS) $(INC_FLAGS) $< $(OFLAG) $@
+
+$(OBJDIR)main.o: $(APP_SRC)main.c
 	$(CC) $(CFLAG) $(CFLAGS) $(INC_FLAGS) $< -o $@
 
 run:
 	$(MAKE) all
 	# qemu-system-aarch64 -machine virt -cpu cortex-a57 -m 128 -serial stdio -nographic -nodefaults -kernel kernel.elf
-	qemu-system-aarch64 -machine virt -cpu cortex-a57 -nographic -kernel kernel.elf
+	qemu-system-aarch64 -machine virt -cpu cortex-a57 -nographic -kernel $(ELF_IMAGE)
 
 gen_tags:
 	./gen_tags.sh

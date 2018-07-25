@@ -32,6 +32,7 @@
 #include "FreeRTOS.h"
 #include "task.h"
 
+#if 0 //RyanYao
 #ifndef configINTERRUPT_CONTROLLER_BASE_ADDRESS
 	#error configINTERRUPT_CONTROLLER_BASE_ADDRESS must be defined.  See http://www.freertos.org/Using-FreeRTOS-on-Cortex-A-Embedded-Processors.html
 #endif
@@ -39,6 +40,7 @@
 #ifndef configINTERRUPT_CONTROLLER_CPU_INTERFACE_OFFSET
 	#error configINTERRUPT_CONTROLLER_CPU_INTERFACE_OFFSET must be defined.  See http://www.freertos.org/Using-FreeRTOS-on-Cortex-A-Embedded-Processors.html
 #endif
+#endif //RyanYao
 
 #ifndef configUNIQUE_INTERRUPT_PRIORITIES
 	#error configUNIQUE_INTERRUPT_PRIORITIES must be defined.  See http://www.freertos.org/Using-FreeRTOS-on-Cortex-A-Embedded-Processors.html

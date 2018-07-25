@@ -130,7 +130,6 @@ _vector_table:
 /******************************************************************************
  * Vector table to use when FreeRTOS is running.
  *****************************************************************************/
-#if 0 //RyanYao
 .set	FREERTOS_VBAR, (VBAR+0x1000)
 
 .org(FREERTOS_VBAR)
@@ -304,6 +303,5 @@ SErrorInterruptHandler:
 	ldp	X0,X1, [sp], #0x10
 
 	eret
-#endif
 
 .end
