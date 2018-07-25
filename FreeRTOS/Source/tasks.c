@@ -2104,8 +2104,8 @@ void vTaskSuspendAll( void )
 
 BaseType_t xTaskResumeAll( void )
 {
-TCB_t *pxTCB = NULL;
-BaseType_t xAlreadyYielded = pdFALSE;
+	TCB_t *pxTCB = NULL;
+	BaseType_t xAlreadyYielded = pdFALSE;
 
 	/* If uxSchedulerSuspended is zero then this function does not match a
 	previous call to vTaskSuspendAll(). */

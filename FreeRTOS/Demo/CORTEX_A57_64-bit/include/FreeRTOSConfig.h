@@ -28,9 +28,9 @@
 #ifndef FREERTOS_CONFIG_H
 #define FREERTOS_CONFIG_H
 
-#if 0 //RyanYao
-#include "xparameters.h"
-#endif //RyanYao
+#include "board.h"
+
+#define GUEST	/* At the time of writing, we only supports EL1. */
 
 #if 1 //RyanYao: the definition is fake, just for build successfully.
 /* Definitions for peripheral PSU_ACPU_GIC */
@@ -199,8 +199,8 @@ void vClearTickInterrupt( void );
 #define configCLEAR_TICK_INTERRUPT() vClearTickInterrupt()
 
 /* The following constant describe the hardware, and are correct for the
-Zynq MPU. */
-#define configINTERRUPT_CONTROLLER_BASE_ADDRESS 		( XPAR_PSU_ACPU_GIC_DIST_BASEADDR )
+QEMU-Virt. */
+#define configINTERRUPT_CONTROLLER_BASE_ADDRESS 		( VIRT_GICD_BASE )
 #define configINTERRUPT_CONTROLLER_CPU_INTERFACE_OFFSET ( XPAR_PSU_ACPU_GIC_BASEADDR - XPAR_PSU_ACPU_GIC_DIST_BASEADDR )
 #define configUNIQUE_INTERRUPT_PRIORITIES				32
 
