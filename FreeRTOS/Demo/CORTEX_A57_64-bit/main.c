@@ -5,8 +5,26 @@
 #include "FreeRTOS.h"
 #include "task.h"
 
+/* board include files. */
+#include "board.h"
+#include "gic_v3.h"
+
 /* driver includes. */
 #include "uart.h"
+
+/* Configure the hardware as necessary */
+static void prvSetupHardware( void );
+
+static void prvSetupHardware( void )
+{
+	/* Ensure no interrupts execute while the scheduler is in an inconsistent
+	state.  Interrupts are automatically enabled when the scheduler is
+	started. */
+	portDISABLE_INTERRUPTS();
+
+	/* Initialize the GIC, including config of partial timer irq */
+	gic_v3_initialize();
+}
 
 void vMainAssertCalled( const char *pcFileName, uint32_t ulLineNumber )
 {
@@ -24,12 +42,15 @@ void hello_world_task(void *p)
 {
 	while(1) {
 		uart_puts("Hello World Task!");
-		//vTaskDelay(1000);
+		vTaskDelay(1);
 	}
 }
 
 int main(void)
 {
+	/* Configure the hardware ready to run */
+	prvSetupHardware();
+
 	uart_puts("Hello World!\n");
 	//configASSERT(0);
 

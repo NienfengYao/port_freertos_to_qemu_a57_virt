@@ -306,7 +306,7 @@ uint32_t ulAPSR;
 	#endif /* conifgASSERT_DEFINED */
 
 
-	/* At the time of writing, the BSP only supports EL3. */
+	/* At the time of writing, the BSP only supports EL1. */
 	__asm volatile ( "MRS %0, CurrentEL" : "=r" ( ulAPSR ) );
 	ulAPSR &= portAPSR_MODE_BITS_MASK;
 
@@ -396,13 +396,6 @@ void vPortExitCritical( void )
 
 void FreeRTOS_Tick_Handler( void )
 {
-	/* Must be the lowest possible priority. */
-	#if !defined( QEMU )
-	{
-		configASSERT( portICCRPR_RUNNING_PRIORITY_REGISTER == ( uint32_t ) ( portLOWEST_USABLE_INTERRUPT_PRIORITY << portPRIORITY_SHIFT ) );
-	}
-	#endif
-
 	/* Interrupts should not be enabled before this point. */
 	#if( configASSERT_DEFINED == 1 )
 	{

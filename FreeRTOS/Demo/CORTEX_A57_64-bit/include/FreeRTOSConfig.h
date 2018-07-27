@@ -29,10 +29,9 @@
 #define FREERTOS_CONFIG_H
 
 #include "board.h"
+#include "gic_v3.h"
 
-#define GUEST	/* At the time of writing, we only supports EL1. */
-
-#if 1 //RyanYao: the definition is fake, just for build successfully.
+#if 1 //RyanYao: the definition is fake, just for build successfully. Should Remove later
 /* Definitions for peripheral PSU_ACPU_GIC */
 #define XPAR_PSU_ACPU_GIC_DEVICE_ID 0
 #define XPAR_PSU_ACPU_GIC_BASEADDR 0xF9020000
@@ -200,7 +199,7 @@ void vClearTickInterrupt( void );
 
 /* The following constant describe the hardware, and are correct for the
 QEMU-Virt. */
-#define configINTERRUPT_CONTROLLER_BASE_ADDRESS 		( VIRT_GICD_BASE )
+#define configINTERRUPT_CONTROLLER_BASE_ADDRESS 		( GIC_GICD_BASE )
 #define configINTERRUPT_CONTROLLER_CPU_INTERFACE_OFFSET ( XPAR_PSU_ACPU_GIC_BASEADDR - XPAR_PSU_ACPU_GIC_DIST_BASEADDR )
 #define configUNIQUE_INTERRUPT_PRIORITIES				32
 

@@ -11,15 +11,18 @@ CC = ${CROSS}-gcc
 AS = ${CROSS}-as
 LD = ${CROSS}-ld
 OBJDUMP = ${CROSS}-objdump
-CFLAGS = -mcpu=cortex-a57 -Wall -Wextra -g
+CFLAGS = -mcpu=cortex-a57 -Wall -Wextra -g -DGUEST
 #	-mcpu=name
 #		Specify the name of the target processor
 #	-Wall
 #		Turns on all optional warnings which are desirable for normal code
 #	-Wextra
 #		This enables some extra warning flags that are not enabled by -Wall
-#	-g  Produce debugging information in the operating system's native format.
-#		 GDB can work with this debugging information.
+#	-g
+#		Produce debugging information in the operating system's native format.
+#		GDB can work with this debugging information.
+#	-DGUEST
+#		#define GUEST /* At the time of writing, we only supports EL1. */
 
 ASM_FLAGS = -mcpu=cortex-a57 -g
 
@@ -70,7 +73,7 @@ DRIVERS_OBJS = uart.o
 # APP_OBJS = main.o FreeRTOS_asm_vectors.o
 # APP_OBJS = kernel.o start.o FreeRTOS_asm_vectors.o
 APP_OBJS = main.o start.o FreeRTOS_asm_vectors.o FreeRTOS_tick_config.o
-APP_OBJS += vectors.o exception.o
+APP_OBJS += vectors.o exception.o sysctrl.o pstate.o gic_v3.o
 # nostdlib.o must be commented out if standard lib is going to be linked!
 APP_OBJS += nostdlib.o
 
@@ -143,7 +146,7 @@ $(OBJDIR)port.o : $(FREERTOS_PORT_SRC)port.c
 	$(CC) $(CFLAG) $(CFLAGS) $(INC_FLAGS) $< $(OFLAG) $@
 
 $(OBJDIR)portASM.o : $(FREERTOS_PORT_SRC)portASM.S
-	$(AS) $(CPUFLAG) $< $(OFLAG) $@
+	$(CC) $(CFLAG) $(CFLAGS) $(INC_FLAGS) $< $(OFLAG) $@
 
 # Demo application
 
@@ -166,6 +169,15 @@ $(OBJDIR)vectors.o : $(APP_SRC)vectors.c
 $(OBJDIR)exception.o : $(APP_SRC)exception.c
 	$(CC) $(CFLAG) $(CFLAGS) $(INC_FLAGS) $< $(OFLAG) $@
 
+$(OBJDIR)sysctrl.o : $(APP_SRC)sysctrl.c
+	$(CC) $(CFLAG) $(CFLAGS) $(INC_FLAGS) $< $(OFLAG) $@
+
+$(OBJDIR)pstate.o : $(APP_SRC)pstate.c
+	$(CC) $(CFLAG) $(CFLAGS) $(INC_FLAGS) $< $(OFLAG) $@
+
+$(OBJDIR)gic_v3.o : $(APP_SRC)gic_v3.c
+	$(CC) $(CFLAG) $(CFLAGS) $(INC_FLAGS) $< $(OFLAG) $@
+
 $(OBJDIR)main.o: $(APP_SRC)main.c
 	$(CC) $(CFLAG) $(CFLAGS) $(INC_FLAGS) $< -o $@
 
@@ -174,7 +186,7 @@ run:
 	# qemu-system-aarch64 -machine virt -cpu cortex-a57 -m 128 -serial stdio -nographic -nodefaults -kernel kernel.elf
 	qemu-system-aarch64 -machine virt -cpu cortex-a57 -nographic -kernel $(ELF_IMAGE)
 
-gen_tags:
+gen_tags: clean_tags
 	./gen_tags.sh
 
 clean_tags:

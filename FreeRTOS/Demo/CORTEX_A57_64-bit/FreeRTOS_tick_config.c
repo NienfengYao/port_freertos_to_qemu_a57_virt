@@ -28,103 +28,125 @@
 /* FreeRTOS includes. */
 #include "FreeRTOS.h"
 #include "task.h"
+#include "cpu.h"
+#include "uart.h"
 
-#if 1 //RyanYao
-void vConfigureTickInterrupt( void ){}
-void vClearTickInterrupt( void ){}
-void vApplicationIRQHandler( uint32_t ulICCIAR ){}
-#else //RyanYao
-/* Xilinx includes. */
-#include "platform.h"
-#include "xttcps.h"
-#include "xscugic.h"
+static uint32_t cntfrq;     /* System frequency */
 
 /* Timer used to generate the tick interrupt. */
-static XTtcPs xRTOSTickTimerInstance;
-
-/*-----------------------------------------------------------*/
-
 void vConfigureTickInterrupt( void )
 {
-BaseType_t xStatus;
-XTtcPs_Config *pxTimerConfiguration;
-XInterval usInterval;
-uint8_t ucPrescale;
-const uint8_t ucLevelSensitive = 1;
-extern XScuGic xInterruptController;
+	uint32_t val;
+	uint64_t ticks, current_cnt;
 
-	pxTimerConfiguration = XTtcPs_LookupConfig( XPAR_XTTCPS_3_DEVICE_ID );
+    uart_puts("CurrentEL = ");
+	val = raw_read_current_el();
+	uart_puthex(val);
 
-	/* Initialise the device. */
-	xStatus = XTtcPs_CfgInitialize( &xRTOSTickTimerInstance, pxTimerConfiguration, pxTimerConfiguration->BaseAddress );
+    uart_puts("\nRVBAR_EL1 = ");
+	val = raw_read_rvbar_el1();
+	uart_puthex(val);
 
-	if( xStatus != XST_SUCCESS )
-	{
-		/* Not sure how to do this before XTtcPs_CfgInitialize is called as
-		*xRTOSTickTimerInstance is set within XTtcPs_CfgInitialize(). */
-		XTtcPs_Stop( &xRTOSTickTimerInstance );
-		xStatus = XTtcPs_CfgInitialize( &xRTOSTickTimerInstance, pxTimerConfiguration, pxTimerConfiguration->BaseAddress );
-		configASSERT( xStatus == XST_SUCCESS );
-	}
+    uart_puts("\nVBAR_EL1 = ");
+	val = raw_read_vbar_el1();
+	uart_puthex(val);
 
-	/* Set the options. */
-	XTtcPs_SetOptions( &xRTOSTickTimerInstance, ( XTTCPS_OPTION_INTERVAL_MODE | XTTCPS_OPTION_WAVE_DISABLE ) );
+    uart_puts("\nDAIF = ");
+	val = raw_read_daif();
+	uart_puthex(val);
 
-	/* Derive values from the tick rate. */
-	XTtcPs_CalcIntervalFromFreq( &xRTOSTickTimerInstance, configTICK_RATE_HZ, &( usInterval ), &( ucPrescale ) );
+	// Disable the timer
+	disable_cntv();
+    uart_puts("\nDisable the timer, CNTV_CTL_EL0 = ");
+	val = raw_read_cntv_ctl();
+	uart_puthex(val);
+    uart_puts("\nSystem Frequency: CNTFRQ_EL0 = ");
+	cntfrq = raw_read_cntfrq_el0();
+	uart_puthex(cntfrq);
 
-	/* Set the interval and prescale. */
-	XTtcPs_SetInterval( &xRTOSTickTimerInstance, usInterval );
-	XTtcPs_SetPrescaler( &xRTOSTickTimerInstance, ucPrescale );
+	// Next timer IRQ is after n sec(s).
+	ticks = 1 * cntfrq;
+	// Get value of the current timer
+	current_cnt = raw_read_cntvct_el0();
+    uart_puts("\nCurrent counter: CNTVCT_EL0 = ");
+	uart_puthex(current_cnt);
+	// Set the interrupt in Current Time + TimerTick
+	raw_write_cntv_cval_el0(current_cnt + ticks);
+    uart_puts("\nAssert Timer IRQ after 1 sec: CNTV_CVAL_EL0 = ");
+	val = raw_read_cntv_cval_el0();
+	uart_puthex(val);
 
-	/* The priority must be the lowest possible. */
-	XScuGic_SetPriorityTriggerType( &xInterruptController, XPAR_XTTCPS_3_INTR, portLOWEST_USABLE_INTERRUPT_PRIORITY << portPRIORITY_SHIFT, ucLevelSensitive );
+	// Enable the timer
+	enable_cntv();
+    uart_puts("\nEnable the timer, CNTV_CTL_EL0 = ");
+	val = raw_read_cntv_ctl();
+	uart_puthex(val);
 
-	/* Connect to the interrupt controller. */
-	xStatus = XScuGic_Connect( &xInterruptController, XPAR_XTTCPS_3_INTR, (Xil_ExceptionHandler) FreeRTOS_Tick_Handler, ( void * ) &xRTOSTickTimerInstance );
-	configASSERT( xStatus == XST_SUCCESS);
+	// Enable IRQ 
+	enable_irq();
+    uart_puts("\nEnable IRQ, DAIF = ");
+	val = raw_read_daif();
+	uart_puthex(val);
+    uart_puts("\n");
 
-	/* Enable the interrupt in the GIC. */
-	XScuGic_Enable( &xInterruptController, XPAR_XTTCPS_3_INTR );
-
-	/* Enable the interrupts in the timer. */
-	XTtcPs_EnableInterrupts( &xRTOSTickTimerInstance, XTTCPS_IXR_INTERVAL_MASK );
-
-	/* Start the timer. */
-	XTtcPs_Start( &xRTOSTickTimerInstance );
 }
 /*-----------------------------------------------------------*/
 
 void vClearTickInterrupt( void )
 {
-volatile uint32_t ulInterruptStatus;
+	uint64_t ticks, current_cnt;
+	uint32_t val;
 
-	/* Read the interrupt status, then write it back to clear the interrupt. */
-	ulInterruptStatus = XTtcPs_GetInterruptStatus( &xRTOSTickTimerInstance );
-	XTtcPs_ClearInterruptStatus( &xRTOSTickTimerInstance, ulInterruptStatus );
-	__asm volatile( "DSB SY" );
-	__asm volatile( "ISB SY" );
+    uart_puts("timer_handler: \n");
+
+	// Disable the timer
+	disable_cntv();
+    uart_puts("\tDisable the timer, CNTV_CTL_EL0 = ");
+	val = raw_read_cntv_ctl();
+	uart_puthex(val);
+	gicd_clear_pending(TIMER_IRQ);
+    uart_puts("\n\tSystem Frequency: CNTFRQ_EL0 = ");
+	uart_puthex(cntfrq);
+
+	// Next timer IRQ is after n sec.
+	ticks = 1 * cntfrq;
+	// Get value of the current timer
+	current_cnt = raw_read_cntvct_el0();
+    uart_puts("\n\tCurrent counter: CNTVCT_EL0 = ");
+	uart_puthex(current_cnt);
+	// Set the interrupt in Current Time + TimerTick
+	raw_write_cntv_cval_el0(current_cnt + ticks);
+	val = raw_read_cntv_cval_el0();
+	uart_puthex(val);
+
+	// Enable the timer
+	enable_cntv();
+    uart_puts("\n\tEnable the timer, CNTV_CTL_EL0 = ");
+	val = raw_read_cntv_ctl();
+	uart_puthex(val);
+    uart_puts("\n");
 }
 /*-----------------------------------------------------------*/
 
 void vApplicationIRQHandler( uint32_t ulICCIAR )
 {
-extern const XScuGic_Config XScuGic_ConfigTable[];
-static const XScuGic_VectorTableEntry *pxVectorTable = XScuGic_ConfigTable[ XPAR_SCUGIC_SINGLE_DEVICE_ID ].HandlerTable;
-uint32_t ulInterruptID;
-const XScuGic_VectorTableEntry *pxVectorEntry;
+	uint32_t ulInterruptID;
+
+    uart_puts("\nvApplicationIRQHandler: ");
+	uart_puthex(ulICCIAR);
+    uart_puts("\n");
 
 	/* Interrupts cannot be re-enabled until the source of the interrupt is
 	cleared. The ID of the interrupt is obtained by bitwise ANDing the ICCIAR
 	value with 0x3FF. */
 	ulInterruptID = ulICCIAR & 0x3FFUL;
-	if( ulInterruptID < XSCUGIC_MAX_NUM_INTR_INPUTS )
-	{
-		/* Call the function installed in the array of installed handler
-		functions. */
-		pxVectorEntry = &( pxVectorTable[ ulInterruptID ] );
-		configASSERT( pxVectorEntry );
-		pxVectorEntry->Handler( pxVectorEntry->CallBackRef );
+
+	/* call handler function */
+	if( ulInterruptID == TIMER_IRQ) {
+		/* Generic Timer */
+		uart_puts("\nvApplicationIRQHandler: Timer IRQ\n");
+		FreeRTOS_Tick_Handler();
+	}else{
+		uart_puts("\nvApplicationIRQHandler: IRQ happend (except timer)\n");
 	}
 }
-#endif //RyanYao
