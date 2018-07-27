@@ -33,30 +33,30 @@
   * [LD Index](https://sourceware.org/binutils/docs/ld/LD-Index.html#LD-Index)
 * FreeRTOS
   * Start
-    * Creating a New FreeRTOS Project (https://www.freertos.org/Creating-a-new-FreeRTOS-project.html)
-    * FreeRTOS Quick Start Guide (https://www.freertos.org/FreeRTOS-quick-start-guide.html)
-    * Getting Started with Simple FreeRTOS Projects (https://www.freertos.org/simple-freertos-demos.html)
-    * Hardware independent FreeRTOS example (https://www.freertos.org/Hardware-independent-RTOS-example.html)
-    * FreeRTOS Tutorial (http://socialledge.com/sjsu/index.php/FreeRTOS_Tutorial)
-    * Coding Standard and Style Guide (https://www.freertos.org/FreeRTOS-Coding-Standard-and-Style-Guide.html)
+    * [Creating a New FreeRTOS Project](https://www.freertos.org/Creating-a-new-FreeRTOS-project.html)
+    * [FreeRTOS Quick Start Guide](https://www.freertos.org/FreeRTOS-quick-start-guide.html)
+    * [Getting Started with Simple FreeRTOS Projects](https://www.freertos.org/simple-freertos-demos.html)
+    * [Hardware independent FreeRTOS example](https://www.freertos.org/Hardware-independent-RTOS-example.html)
+    * [FreeRTOS Tutorial](http://socialledge.com/sjsu/index.php/FreeRTOS_Tutorial)
+    * [Coding Standard and Style Guide](https://www.freertos.org/FreeRTOS-Coding-Standard-and-Style-Guide.html)
   * Memory
-    * Memory Management (https://www.freertos.org/a00111.html)
-    * Static Vs Dynamic Memory Allocation (https://www.freertos.org/Static_Vs_Dynamic_Memory_Allocation.html)
-    * Statically Allocated FreeRTOS Reference Project (https://www.freertos.org/freertos-static-allocation-demo.html)
+    * [Memory Management](https://www.freertos.org/a00111.html)
+    * [Static Vs Dynamic Memory Allocation](https://www.freertos.org/Static_Vs_Dynamic_Memory_Allocation.html)
+    * [Statically Allocated FreeRTOS Reference Project](https://www.freertos.org/freertos-static-allocation-demo.html)
   * GIC
-    * That incorporate a Generic Interrupt Controller (GIC) (https://www.freertos.org/Using-FreeRTOS-on-Cortex-A-Embedded-Processors.html)
-    * 淺談優先權，從ARM Cortex-M到FreeRTOS設定 (http://opass.logdown.com/posts/248297-talking-about-the-priority-from-the-arm-set-cortex-m-to-freertos)
+    * [That incorporate a Generic Interrupt Controller (GIC)](https://www.freertos.org/Using-FreeRTOS-on-Cortex-A-Embedded-Processors.html)
+    * [淺談優先權，從ARM Cortex-M到FreeRTOS設定](http://opass.logdown.com/posts/248297-talking-about-the-priority-from-the-arm-set-cortex-m-to-freertos)
   * [FreeRTOS Tutorial](http://socialledge.com/sjsu/index.php/FreeRTOS_Tutorial)
 * U-Boot
-  * U-Boot on QEMU's 'virt' machine on ARM & AArch64 (https://github.com/u-boot/u-boot/blob/master/doc/README.qemu-arm)
-  * What is the difference between ELF files and bin files? (https://stackoverflow.com/questions/2427011/what-is-the-difference-between-elf-files-and-bin-files?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa)
-  * U-BOOT-2016.07移植 (第一篇) 初步分析 (http://www.itread01.com/articles/1476615343.html)
+  * [U-Boot on QEMU's 'virt' machine on ARM & AArch64](https://github.com/u-boot/u-boot/blob/master/doc/README.qemu-arm)
+  * [What is the difference between ELF files and bin files?](https://stackoverflow.com/questions/2427011/what-is-the-difference-between-elf-files-and-bin-files?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa)
+  * [U-BOOT-2016.07移植 (第一篇) 初步分析](http://www.itread01.com/articles/1476615343.html)
 * GDB
   * [GNU GDB Debugger Command Cheat Sheet](http://www.yolinux.com/TUTORIALS/GDB-Commands.html)
   * [Debugging with GDB （入門篇）](http://www.study-area.org/goldencat/debug.htm)
   * [GDB Debugging ARM U-Boot on QEMU](http://winfred-lu.blogspot.com/2011/12/arm-u-boot-on-qemu.html)
   * [Use Qemu GDB to forcely debug Linux early boot process ](https://mudongliang.github.io/2017/09/21/use-qemu-gdb-to-forcely-debug-linux-early-boot-process.html)
-  * how can one see content of stack with gdb (https://stackoverflow.com/questions/7848771/how-can-one-see-content-of-stack-with-gdb)
+  * [how can one see content of stack with gdb](https://stackoverflow.com/questions/7848771/how-can-one-see-content-of-stack-with-gdb)
 * ARM
   * [Arm® Compiler armasm User Guide](http://www.keil.com/support/man/docs/armclang_asm/armclang_asm_chunk708094578.htm)
   * [Application Note Bare-metal Boot Code for ARMv8-A Processors Version 1.0](http://infocenter.arm.com/help/topic/com.arm.doc.dai0527a/DAI0527A_baremetal_boot_code_for_ARMv8_A_processors.pdf)
@@ -65,16 +65,16 @@
   * ARM® Cortex®-A Series Version: 1.0 Programmer’s Guide for ARMv8-A
   * ARM® Generic Interrupt Controller Architecture Specification GIC architecture version 3.0 and version 4.0
 * Compile
-  * GNU 的連結工具 (ld, nm, objdump, ar) (http://sp1.wikidot.com/gnulinker)
+  * [GNU 的連結工具 (ld, nm, objdump, ar)](http://sp1.wikidot.com/gnulinker)
   * Makefile
-    * Makefile的賦值運算符(=, :=, +=, ?=) (http://dannysun-unknown.blogspot.com/2015/03/makefile.html)
+    * [Makefile的賦值運算符(=, :=, +=, ?=)](http://dannysun-unknown.blogspot.com/2015/03/makefile.html)
   * GCC
-    * GCC Command-Line Options (http://tigcc.ticalc.org/doc/comopts.html)
+    * [GCC Command-Line Options](http://tigcc.ticalc.org/doc/comopts.html)
     * Weak symbol
-      * 弱符號 - 維基百科(https://zh.wikipedia.org/wiki/%E5%BC%B1%E7%AC%A6%E5%8F%B7)
-      * Weak references and definitions (http://www.keil.com/support/man/docs/armclang_link/armclang_link_pge1362065917715.htm)
+      * [弱符號 - 維基百科](https://zh.wikipedia.org/wiki/%E5%BC%B1%E7%AC%A6%E5%8F%B7)
+      * [Weak references and definitions](http://www.keil.com/support/man/docs/armclang_link/armclang_link_pge1362065917715.htm)
   * Assembler
-    * Writing ARM Assembly Language (http://www.keil.com/support/man/docs/armasm/armasm_dom1359731144635.htm)
-    * ARM組語備忘錄 (https://myao0730.blogspot.com/2015/09/arm-aapcs-def-procedure-call-standard.html)
-    * Using as (https://sourceware.org/binutils/docs/as/index.html#SEC_Contents)
+    * [Writing ARM Assembly Language](http://www.keil.com/support/man/docs/armasm/armasm_dom1359731144635.htm)
+    * [ARM組語備忘錄](https://myao0730.blogspot.com/2015/09/arm-aapcs-def-procedure-call-standard.html)
+    * [Using as](https://sourceware.org/binutils/docs/as/index.html#SEC_Contents)
   
