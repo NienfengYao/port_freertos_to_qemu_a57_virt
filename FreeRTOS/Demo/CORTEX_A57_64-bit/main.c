@@ -40,9 +40,13 @@ void vMainAssertCalled( const char *pcFileName, uint32_t ulLineNumber )
 
 void hello_world_task(void *p)
 {
+	int i=0;
+
 	while(1) {
-		uart_puts("Hello World Task!");
-		vTaskDelay(1);
+		uart_puts("Hello World Task! ");
+		uart_puthex(i++);
+		uart_puts("\n");
+		vTaskDelay(1000);
 	}
 }
 
@@ -55,13 +59,10 @@ int main(void)
 	//configASSERT(0);
 
 	/* Create Tasks */
-	uart_puts("1!\n");
 	xTaskCreate(hello_world_task, "hello_task", 2048, 0, 1, 0);
-	uart_puts("2!\n");
 
 	/* Start the scheduler */	
 	vTaskStartScheduler();
-	uart_puts("3!\n");
 
 	return -1;
 }

@@ -36,105 +36,26 @@ static uint32_t cntfrq;     /* System frequency */
 /* Timer used to generate the tick interrupt. */
 void vConfigureTickInterrupt( void )
 {
-	uint32_t val;
-	uint64_t ticks, current_cnt;
-
-    uart_puts("CurrentEL = ");
-	val = raw_read_current_el();
-	uart_puthex(val);
-
-    uart_puts("\nRVBAR_EL1 = ");
-	val = raw_read_rvbar_el1();
-	uart_puthex(val);
-
-    uart_puts("\nVBAR_EL1 = ");
-	val = raw_read_vbar_el1();
-	uart_puthex(val);
-
-    uart_puts("\nDAIF = ");
-	val = raw_read_daif();
-	uart_puthex(val);
-
 	// Disable the timer
 	disable_cntv();
-    uart_puts("\nDisable the timer, CNTV_CTL_EL0 = ");
-	val = raw_read_cntv_ctl();
-	uart_puthex(val);
-    uart_puts("\nSystem Frequency: CNTFRQ_EL0 = ");
+	// Get system frequency
 	cntfrq = raw_read_cntfrq_el0();
-	uart_puthex(cntfrq);
-
-	// Next timer IRQ is after n sec(s).
-	ticks = 1 * cntfrq;
-	// Get value of the current timer
-	current_cnt = raw_read_cntvct_el0();
-    uart_puts("\nCurrent counter: CNTVCT_EL0 = ");
-	uart_puthex(current_cnt);
-	// Set the interrupt in Current Time + TimerTick
-	raw_write_cntv_cval_el0(current_cnt + ticks);
-    uart_puts("\nAssert Timer IRQ after 1 sec: CNTV_CVAL_EL0 = ");
-	val = raw_read_cntv_cval_el0();
-	uart_puthex(val);
-
+	// Set tick rate
+	raw_write_cntv_tval_el0(cntfrq/configTICK_RATE_HZ);
 	// Enable the timer
 	enable_cntv();
-    uart_puts("\nEnable the timer, CNTV_CTL_EL0 = ");
-	val = raw_read_cntv_ctl();
-	uart_puthex(val);
-
-	// Enable IRQ 
-	enable_irq();
-    uart_puts("\nEnable IRQ, DAIF = ");
-	val = raw_read_daif();
-	uart_puthex(val);
-    uart_puts("\n");
-
 }
 /*-----------------------------------------------------------*/
 
 void vClearTickInterrupt( void )
 {
-	uint64_t ticks, current_cnt;
-	uint32_t val;
-
-    uart_puts("timer_handler: \n");
-
-	// Disable the timer
-	disable_cntv();
-    uart_puts("\tDisable the timer, CNTV_CTL_EL0 = ");
-	val = raw_read_cntv_ctl();
-	uart_puthex(val);
-	gicd_clear_pending(TIMER_IRQ);
-    uart_puts("\n\tSystem Frequency: CNTFRQ_EL0 = ");
-	uart_puthex(cntfrq);
-
-	// Next timer IRQ is after n sec.
-	ticks = 1 * cntfrq;
-	// Get value of the current timer
-	current_cnt = raw_read_cntvct_el0();
-    uart_puts("\n\tCurrent counter: CNTVCT_EL0 = ");
-	uart_puthex(current_cnt);
-	// Set the interrupt in Current Time + TimerTick
-	raw_write_cntv_cval_el0(current_cnt + ticks);
-	val = raw_read_cntv_cval_el0();
-	uart_puthex(val);
-
-	// Enable the timer
-	enable_cntv();
-    uart_puts("\n\tEnable the timer, CNTV_CTL_EL0 = ");
-	val = raw_read_cntv_ctl();
-	uart_puthex(val);
-    uart_puts("\n");
+	raw_write_cntv_tval_el0(cntfrq/configTICK_RATE_HZ);
 }
 /*-----------------------------------------------------------*/
 
 void vApplicationIRQHandler( uint32_t ulICCIAR )
 {
 	uint32_t ulInterruptID;
-
-    uart_puts("\nvApplicationIRQHandler: ");
-	uart_puthex(ulICCIAR);
-    uart_puts("\n");
 
 	/* Interrupts cannot be re-enabled until the source of the interrupt is
 	cleared. The ID of the interrupt is obtained by bitwise ANDing the ICCIAR
@@ -144,7 +65,6 @@ void vApplicationIRQHandler( uint32_t ulICCIAR )
 	/* call handler function */
 	if( ulInterruptID == TIMER_IRQ) {
 		/* Generic Timer */
-		uart_puts("\nvApplicationIRQHandler: Timer IRQ\n");
 		FreeRTOS_Tick_Handler();
 	}else{
 		uart_puts("\nvApplicationIRQHandler: IRQ happend (except timer)\n");

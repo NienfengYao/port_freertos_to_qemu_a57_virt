@@ -27,7 +27,6 @@ static void init_gicc(void)
 {
 	uint32_t pending_irq;
 
-    uart_puts("init_gicc()\n");
 	/* Disable CPU interface */
 	*REG_GIC_GICC_CTLR = GICC_CTLR_DISABLE;
 
@@ -55,7 +54,6 @@ static void init_gicd(void)
 {
 	int32_t	i, regs_nr;
 
-    uart_puts("init_gicd()\n");
 	/* Diable distributor */
 	*REG_GIC_GICD_CTLR = GIC_GICD_CTLR_DISABLE;
 
@@ -199,8 +197,6 @@ void gic_v3_eoi(irq_no irq) {
  */ 
 void gic_v3_initialize(void)
 {
-
-    uart_puts("gic_v3_initialize()\n");
 	init_gicd();
 	init_gicc();
 	gicd_config(TIMER_IRQ, GIC_GICD_ICFGR_EDGE);
