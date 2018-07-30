@@ -4,8 +4,10 @@
   * The FreeRTOS project bases from FreeRTOSv10.0.1/FreeRTOS/Demo/CORTEX_A53_64-bit_UltraScale_MPSoC
 * Status
   * Basic Uart works.
+    * uart_putc(), uart_puts(), uart_puthex()
   * Basic FreeRTOS works.
     * configASSERT(), xTaskCreate(), vTaskStartScheduler()
+  * printf() works.
     
 # Issues
 * GDB can't step into main() if missing lable: magic_label in start.S (commit 0ddf0c433d759b763c84106ee4810e5f809a78c3)
@@ -26,6 +28,7 @@
   * FreeRTOSv10.0.1/FreeRTOS/Demo/CORTEX_A53_64-bit_UltraScale_MPSoC
 * QEMU
   * [QEMU version 2.12.50 User Documentation](https://qemu.weilnetz.de/doc/qemu-doc.html)
+  * [virt.c][https://github.com/qemu/qemu/blob/master/hw/arm/virt.c]
 * Makefile
   * [Makefile範例教學](http://maxubuntu.blogspot.com/2010/02/makefile.html)
   * [GNU 的連結工具 (ld, nm, objdump, ar)](http://sp1.wikidot.com/gnulinker)
@@ -57,7 +60,9 @@
   * [GDB Debugging ARM U-Boot on QEMU](http://winfred-lu.blogspot.com/2011/12/arm-u-boot-on-qemu.html)
   * [Use Qemu GDB to forcely debug Linux early boot process ](https://mudongliang.github.io/2017/09/21/use-qemu-gdb-to-forcely-debug-linux-early-boot-process.html)
   * [how can one see content of stack with gdb](https://stackoverflow.com/questions/7848771/how-can-one-see-content-of-stack-with-gdb)
+  * [10.6 Examining Memory](https://sourceware.org/gdb/onlinedocs/gdb/Memory.html)
 * ARM
+  * [iOS开发同学的arm64汇编入门](https://blog.cnbluebox.com/blog/2017/07/24/arm64-start/)
   * [Arm® Compiler armasm User Guide](http://www.keil.com/support/man/docs/armclang_asm/armclang_asm_chunk708094578.htm)
   * [Application Note Bare-metal Boot Code for ARMv8-A Processors Version 1.0](http://infocenter.arm.com/help/topic/com.arm.doc.dai0527a/DAI0527A_baremetal_boot_code_for_ARMv8_A_processors.pdf)
   * ARM® Architecture Reference Manual ARMv8, for ARMv8-A architecture profile Beta
@@ -77,4 +82,8 @@
     * [Writing ARM Assembly Language](http://www.keil.com/support/man/docs/armasm/armasm_dom1359731144635.htm)
     * [ARM組語備忘錄](https://myao0730.blogspot.com/2015/09/arm-aapcs-def-procedure-call-standard.html)
     * [Using as](https://sourceware.org/binutils/docs/as/index.html#SEC_Contents)
+* printf()
+  * [Write your own printf() function in c](http://www.firmcodes.com/write-printf-function-c/)
+  * [Wiki: stdarg.h](https://zh.wikipedia.org/wiki/Stdarg.h)
+  * [printf-stdarg.c](https://github.com/atgreen/FreeRTOS/blob/master/Demo/CORTEX_STM32F103_Primer_GCC/printf-stdarg.c)
   
