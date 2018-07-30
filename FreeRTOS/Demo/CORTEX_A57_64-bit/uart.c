@@ -1,7 +1,9 @@
+#include <stdio.h>
+#include "FreeRTOSConfig.h"
 #include "uart.h"
 
-volatile unsigned int * const UART0DR = (unsigned int *) 0x09000000;
-volatile unsigned int * const UART0FR = (unsigned int *) 0x09000018;
+volatile unsigned int * const UART0DR = (unsigned int *) UARTDR;
+volatile unsigned int * const UART0FR = (unsigned int *) UARTFR;
 
 
 void uart_putc(const char c)

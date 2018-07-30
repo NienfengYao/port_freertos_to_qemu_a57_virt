@@ -67,6 +67,6 @@ void vApplicationIRQHandler( uint32_t ulICCIAR )
 		/* Generic Timer */
 		FreeRTOS_Tick_Handler();
 	}else{
-		uart_puts("\nvApplicationIRQHandler: IRQ happend (except timer)\n");
+		printf("\n%s(): IRQ happend (%u)\n", __func__, ulInterruptID);
 	}
 }

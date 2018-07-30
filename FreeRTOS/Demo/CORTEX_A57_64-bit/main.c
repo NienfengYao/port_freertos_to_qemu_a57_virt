@@ -43,20 +43,21 @@ void hello_world_task(void *p)
 	int i=0;
 
 	while(1) {
-		uart_puts("Hello World Task! ");
-		uart_puthex(i++);
-		uart_puts("\n");
+		printf("%s() %d\n", __func__, i++);
 		vTaskDelay(1000);
 	}
 }
 
 int main(void)
 {
+
 	/* Configure the hardware ready to run */
 	prvSetupHardware();
 
-	uart_puts("Hello World!\n");
+	uart_puts("Hello World main()!\n");
 	//configASSERT(0);
+
+	test_printf();
 
 	/* Create Tasks */
 	xTaskCreate(hello_world_task, "hello_task", 2048, 0, 1, 0);

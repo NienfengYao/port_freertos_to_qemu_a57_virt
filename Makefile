@@ -11,7 +11,7 @@ CC = $(CROSS)-gcc
 AS = $(CROSS)-as
 LD = $(CROSS)-ld
 OBJDUMP = $(CROSS)-objdump
-CFLAGS = -mcpu=cortex-a57 -Wall -Wextra -g -DGUEST
+CFLAGS = -mcpu=cortex-a57 -ffreestanding -Wall -Wextra -g -DGUEST
 #	-mcpu=name
 #		Specify the name of the target processor
 #	-Wall
@@ -23,7 +23,12 @@ CFLAGS = -mcpu=cortex-a57 -Wall -Wextra -g -DGUEST
 #		GDB can work with this debugging information.
 #	-DGUEST
 #		#define GUEST /* At the time of writing, we only supports EL1. */
-
+#	-ffreestanding
+#		Assert that compilation targets a freestanding environment. This
+#		implies -fno-builtin. A freestanding environment is one in which the
+#		standard library may not exist, and program startup may not necessarily
+#		be at "main".  The most obvious example is an OS kernel.  This is
+#		equivalent to -fno-hosted.
 ASM_FLAGS = -mcpu=cortex-a57 -g
 
 # Compiler/target path in FreeRTOS/Source/portable
@@ -67,6 +72,7 @@ FREERTOS_PORT_OBJS = port.o portASM.o
 
 APP_OBJS = main.o start.o FreeRTOS_asm_vectors.o FreeRTOS_tick_config.o
 APP_OBJS += vectors.o exception.o sysctrl.o pstate.o gic_v3.o uart.o
+APP_OBJS += printf-stdarg.o
 # nostdlib.o must be commented out if standard lib is going to be linked!
 APP_OBJS += nostdlib.o
 
