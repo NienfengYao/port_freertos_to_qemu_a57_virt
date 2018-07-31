@@ -7,4 +7,6 @@ void test_queue(void);
 void test_semaphore(void);
 /* Binary Semaphore Example */
 void test_binary_semaphore(void);
+/* Software Timer Example */
+void test_software_timer(void);
 #endif  /*  _EXAMPLE_H   */

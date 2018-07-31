@@ -311,7 +311,9 @@ uint32_t ulAPSR;
 	ulAPSR &= portAPSR_MODE_BITS_MASK;
 
 #if defined( GUEST )
-	#warning Building for execution as a guest under XEN. THIS IS NOT A FULLY TESTED PATH.
+	#if 0 //RyanYao mark
+	//#warning Building for execution as a guest under XEN. THIS IS NOT A FULLY TESTED PATH.
+	#endif
 	configASSERT( ulAPSR == portEL1 );
 	if( ulAPSR == portEL1 )
 #else

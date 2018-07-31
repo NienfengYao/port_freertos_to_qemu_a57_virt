@@ -44,8 +44,9 @@ void hello_world_task(void *p)
 {
 	int i=0;
 
-	while(1) {
-		printf("%s() %d\n", __func__, i++);
+	(void)p;
+	while(2) {
+		printf("%s() %d.\n", __func__, i++);
 		vTaskDelay(1000);
 	}
 }
@@ -64,7 +65,8 @@ int main(void)
 #if 1	/* Example Test */
 	//test_queue();
 	//test_semaphore();
-	test_binary_semaphore();
+	//test_binary_semaphore();
+	test_software_timer();
 #else
 	/* Create Tasks */
 	xTaskCreate(hello_world_task, "hello_task", 2048, 0, 1, 0);
@@ -72,6 +74,9 @@ int main(void)
 
 	/* Start the scheduler */	
 	vTaskStartScheduler();
+
+	/* Should not reach here. */
+	for( ;; );
 
 	return -1;
 }

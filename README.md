@@ -50,6 +50,7 @@
     * [That incorporate a Generic Interrupt Controller (GIC)](https://www.freertos.org/Using-FreeRTOS-on-Cortex-A-Embedded-Processors.html)
     * [淺談優先權，從ARM Cortex-M到FreeRTOS設定](http://opass.logdown.com/posts/248297-talking-about-the-priority-from-the-arm-set-cortex-m-to-freertos)
   * [FreeRTOS Tutorial](http://socialledge.com/sjsu/index.php/FreeRTOS_Tutorial)
+  * [xTimerCreate](https://www.freertos.org/FreeRTOS-timers-xTimerCreate.html)
 * U-Boot
   * [U-Boot on QEMU's 'virt' machine on ARM & AArch64](https://github.com/u-boot/u-boot/blob/master/doc/README.qemu-arm)
   * [What is the difference between ELF files and bin files?](https://stackoverflow.com/questions/2427011/what-is-the-difference-between-elf-files-and-bin-files?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa)

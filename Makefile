@@ -54,7 +54,7 @@ APP_SRC = ./FreeRTOS/Demo/CORTEX_A57_64-bit/
 FREERTOS_OBJS = queue.o list.o tasks.o
 # The following o. files are only necessary if
 # certain options are enabled in FreeRTOSConfig.h
-#FREERTOS_OBJS += timers.o
+FREERTOS_OBJS += timers.o
 #FREERTOS_OBJS += croutine.o
 #FREERTOS_OBJS += event_groups.o
 #FREERTOS_OBJS += stream_buffer.o
