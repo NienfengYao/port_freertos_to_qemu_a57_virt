@@ -72,7 +72,7 @@ FREERTOS_PORT_OBJS = port.o portASM.o
 
 APP_OBJS = main.o start.o FreeRTOS_asm_vectors.o FreeRTOS_tick_config.o
 APP_OBJS += vectors.o exception.o sysctrl.o pstate.o gic_v3.o uart.o
-APP_OBJS += printf-stdarg.o
+APP_OBJS += printf-stdarg.o example.o
 # nostdlib.o must be commented out if standard lib is going to be linked!
 APP_OBJS += nostdlib.o
 

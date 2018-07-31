@@ -12,6 +12,8 @@
 /* driver includes. */
 #include "uart.h"
 
+#include "example.h"
+
 /* Configure the hardware as necessary */
 static void prvSetupHardware( void );
 
@@ -50,17 +52,23 @@ void hello_world_task(void *p)
 
 int main(void)
 {
-
 	/* Configure the hardware ready to run */
 	prvSetupHardware();
 
 	uart_puts("Hello World main()!\n");
 	//configASSERT(0);
 
-	test_printf();
+	/* printf() test, have to enable TEST_PRINTF in uart.h */
+	//test_printf();
 
+#if 1	/* Example Test */
+	//test_queue();
+	//test_semaphore();
+	test_binary_semaphore();
+#else
 	/* Create Tasks */
 	xTaskCreate(hello_world_task, "hello_task", 2048, 0, 1, 0);
+#endif
 
 	/* Start the scheduler */	
 	vTaskStartScheduler();

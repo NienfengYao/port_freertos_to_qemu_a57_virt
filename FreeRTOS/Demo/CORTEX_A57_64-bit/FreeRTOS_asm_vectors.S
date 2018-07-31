@@ -420,13 +420,13 @@ SynchronousInterruptHandler:
 	stp	X12,X13, [sp,#-0x10]!
 	stp	X14,X15, [sp,#-0x10]!
 	stp	X16,X17, [sp,#-0x10]!
-	stp     X18,X19, [sp,#-0x10]!
-	stp     X29,X30, [sp,#-0x10]!
+	stp	X18,X19, [sp,#-0x10]!
+	stp	X29,X30, [sp,#-0x10]!
 
-        bl      SynchronousInterrupt
+	bl	SynchronousInterrupt
 
-	ldp     X29,X30, [sp], #0x10
-        ldp     X18,X19, [sp], #0x10
+	ldp	X29,X30, [sp], #0x10
+	ldp	X18,X19, [sp], #0x10
 	ldp	X16,X17, [sp], #0x10
 	ldp	X14,X15, [sp], #0x10
 	ldp	X12,X13, [sp], #0x10
@@ -449,13 +449,13 @@ IRQInterruptHandler:
 	stp	X12,X13, [sp,#-0x10]!
 	stp	X14,X15, [sp,#-0x10]!
 	stp	X16,X17, [sp,#-0x10]!
-	stp     X18,X19, [sp,#-0x10]!
-	stp     X29,X30, [sp,#-0x10]!
+	stp	X18,X19, [sp,#-0x10]!
+	stp	X29,X30, [sp,#-0x10]!
 
-	bl      IRQInterrupt
+	bl	IRQInterrupt
 
-	ldp     X29,X30, [sp], #0x10
-	ldp     X18,X19, [sp], #0x10
+	ldp	X29,X30, [sp], #0x10
+	ldp	X18,X19, [sp], #0x10
 	ldp	X16,X17, [sp], #0x10
 	ldp	X14,X15, [sp], #0x10
 	ldp	X12,X13, [sp], #0x10
@@ -479,13 +479,13 @@ FIQInterruptHandler:
 	stp	X12,X13, [sp,#-0x10]!
 	stp	X14,X15, [sp,#-0x10]!
 	stp	X16,X17, [sp,#-0x10]!
-	stp     X18,X19, [sp,#-0x10]!
-	stp     X29,X30, [sp,#-0x10]!
+	stp	X18,X19, [sp,#-0x10]!
+	stp	X29,X30, [sp,#-0x10]!
 
-        bl      FIQInterrupt
+	bl	FIQInterrupt
 
-	ldp     X29,X30, [sp], #0x10
-        ldp     X18,X19, [sp], #0x10
+	ldp	X29,X30, [sp], #0x10
+	ldp	X18,X19, [sp], #0x10
 	ldp	X16,X17, [sp], #0x10
 	ldp	X14,X15, [sp], #0x10
 	ldp	X12,X13, [sp], #0x10
@@ -509,13 +509,13 @@ SErrorInterruptHandler:
 	stp	X12,X13, [sp,#-0x10]!
 	stp	X14,X15, [sp,#-0x10]!
 	stp	X16,X17, [sp,#-0x10]!
-	stp     X18,X19, [sp,#-0x10]!
-	stp     X29,X30, [sp,#-0x10]!
+	stp	X18,X19, [sp,#-0x10]!
+	stp	X29,X30, [sp,#-0x10]!
 
-        bl      SErrorInterrupt
+	bl	SErrorInterrupt
 
-	ldp     X29,X30, [sp], #0x10
-        ldp     X18,X19, [sp], #0x10
+	ldp	X29,X30, [sp], #0x10
+	ldp	X18,X19, [sp], #0x10
 	ldp	X16,X17, [sp], #0x10
 	ldp	X14,X15, [sp], #0x10
 	ldp	X12,X13, [sp], #0x10
