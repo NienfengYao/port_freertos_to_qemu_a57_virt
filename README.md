@@ -2,12 +2,15 @@
 * Porting FreeRTOS to QEMU (-M virt -cpu cortex-a57). I am studying now.
   * The booting procedure bases from [u-boot](u-boot/u-boot)
   * The FreeRTOS project bases from FreeRTOSv10.0.1/FreeRTOS/Demo/CORTEX_A53_64-bit_UltraScale_MPSoC
+  * Currently, the default exception level in booting is EL1.
 * Status
   * Basic Uart works.
     * uart_putc(), uart_puts(), uart_puthex()
   * Basic FreeRTOS works.
     * configASSERT(), xTaskCreate(), vTaskStartScheduler()
   * printf() works.
+  * Basic examples work.
+    *  Queue, Mutex, Binary Semaphore and software timer.
     
 # Issues
 * GDB can't step into main() if missing lable: magic_label in start.S (commit 0ddf0c433d759b763c84106ee4810e5f809a78c3)
