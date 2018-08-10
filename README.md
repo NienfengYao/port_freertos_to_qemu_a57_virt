@@ -31,7 +31,7 @@
   * FreeRTOSv10.0.1/FreeRTOS/Demo/CORTEX_A53_64-bit_UltraScale_MPSoC
 * QEMU
   * [QEMU version 2.12.50 User Documentation](https://qemu.weilnetz.de/doc/qemu-doc.html)
-  * [virt.c][https://github.com/qemu/qemu/blob/master/hw/arm/virt.c]
+  * [virt.c](https://github.com/qemu/qemu/blob/master/hw/arm/virt.c)
 * Makefile
   * [Makefile範例教學](http://maxubuntu.blogspot.com/2010/02/makefile.html)
   * [GNU 的連結工具 (ld, nm, objdump, ar)](http://sp1.wikidot.com/gnulinker)
