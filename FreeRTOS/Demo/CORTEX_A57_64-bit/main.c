@@ -14,6 +14,9 @@
 
 #include "example.h"
 
+
+extern void nvdla_bdma_mmio_test(void *p);
+
 /* Configure the hardware as necessary */
 static void prvSetupHardware( void );
 
@@ -62,14 +65,19 @@ int main(void)
 	/* printf() test, have to enable TEST_PRINTF in uart.h */
 	//test_printf();
 
-#if 1	/* Example Test */
+#if 0	/* Example Test */
 	//test_queue();
 	//test_semaphore();
 	//test_binary_semaphore();
 	test_software_timer();
-#else
+#endif
+#if 0
 	/* Create Tasks */
 	xTaskCreate(hello_world_task, "hello_task", 2048, 0, 1, 0);
+#endif
+#if 1
+	/* Create Tasks */
+	xTaskCreate(nvdla_bdma_mmio_test, "nvdla_bdma_mmio_test", 2048, 0, 1, 0);
 #endif
 
 	/* Start the scheduler */	

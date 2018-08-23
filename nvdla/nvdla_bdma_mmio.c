@@ -8,17 +8,8 @@
 
 // File Name: nvdla_bdma_mmio.c
 
-
-#include <sys/mman.h>
-#include <unistd.h>
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdint.h>
-#include <fcntl.h>
-#include <errno.h>
-
-#include "arnvdla.uh"
+#include "FreeRTOS.h"
+#include "uart.h"
 #include "arnvdla.h"
 
 #define LOW32(addr)   ((uint32_t)((addr) & 0xffffffff))
@@ -41,58 +32,21 @@ typedef enum {
 
 void* mmap_device(nv_device dev)
 {
-    size_t size  = 0;
-    off_t offset = 0;
+    uint64_t offset = 0;
+
     switch(dev) {
     case eDEVICE_DLA:
-        size = NVDLA_MMIO_SIZE;
         offset = NVDLA_MMIO_BASE;
         break;
     case eDEVICE_MEM:
-        size = MEMORY_SIZE;
         offset = MEMORY_BASE;
         break;
     default:
         printf("Unknown device\n");
-        exit(EXIT_FAILURE);
+		configASSERT(0);
     }
 
-    int fd = open("/dev/mem", O_RDWR);
-	if (fd < 0) {
-		perror("open /dev/mem failed!");
-        exit(EXIT_FAILURE);
-	}
-
-    void* device_mm = mmap(NULL, size, PROT_READ | PROT_WRITE, MAP_SHARED, fd, offset);
-    if (close(fd) < 0) {
-        perror("close failed!");
-    }
-    if (device_mm == MAP_FAILED) {
-        perror("mmap DLA failed!");
-        exit(EXIT_FAILURE);
-    }
-    return device_mm;
-}
-
-
-void munmap_device(nv_device dev, void* mm)
-{
-    size_t size  = 0;
-    switch(dev) {
-    case eDEVICE_DLA:
-        size = NVDLA_MMIO_SIZE;
-        break;
-    case eDEVICE_MEM:
-        size = MEMORY_SIZE;
-        break;
-    default:
-        printf("Unknown device\n");
-        exit(EXIT_FAILURE);
-    }
-
-    if (munmap(mm, size) < 0) {
-        perror("mumap failed!");
-    }
+    return (void*)offset;
 }
 
 
@@ -121,7 +75,7 @@ void test_data(struct tensor* in, struct tensor* out, void* mem_mm)
 {
     if (mem_mm == NULL) {
         printf("Invalid memory handle\n");
-        exit(EXIT_FAILURE);
+		configASSERT(0);
     }
     uint8_t* mm = (uint8_t*)mem_mm;
 
@@ -204,9 +158,10 @@ const struct dla_reg* test_program(struct tensor* in, struct tensor* out)
     return program;
 }
 
-
-int main(int argc, char* argv[])
+void nvdla_bdma_mmio_test(void *p)
 {
+	(void)p;
+	printf("%s()\n", __func__);
     void* mem_mm = mmap_device(eDEVICE_MEM);
     void* dla_mm = mmap_device(eDEVICE_DLA);
 
@@ -228,7 +183,7 @@ int main(int argc, char* argv[])
     }
     printf("Finish programming...\n\n");
 
-    #if 0 //RyanYao
+    #if 0
     /* Check regs */
     printf("Start checking...\n");
     progs = test;
@@ -247,14 +202,10 @@ int main(int argc, char* argv[])
     /*
     int result = 1;
     */
-    #endif //RyanYao
+    #endif
     int result = test_check(&out, mem_mm, dla_mmio);
-
-    munmap_device(eDEVICE_MEM, mem_mm);
-    munmap_device(eDEVICE_DLA, dla_mm);
-
     if (result < 0) {
-        return EXIT_FAILURE;
+    	printf("Check Failed...\n\n");
+        configASSERT(0);
     }
-    return 0;
 }

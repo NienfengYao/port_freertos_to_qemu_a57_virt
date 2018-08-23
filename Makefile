@@ -49,6 +49,9 @@ FREERTOS_PORT_SRC = $(FREERTOS_SRC)portable/$(PORT_COMP_TARG)
 # Directory with Application source files
 APP_SRC = ./FreeRTOS/Demo/CORTEX_A57_64-bit/
 
+# Directory with NVDLA source files
+NVDLA_SRC = ./nvdla/
+
 # Due to a large number, the .o files are arranged into logical groups:
 
 FREERTOS_OBJS = queue.o list.o tasks.o
@@ -76,9 +79,11 @@ APP_OBJS += printf-stdarg.o example.o
 # nostdlib.o must be commented out if standard lib is going to be linked!
 APP_OBJS += nostdlib.o
 
+# NVDLA
+NVDLA_OBJS = nvdla_bdma_mmio.o
 
 # All object files specified above are prefixed the intermediate directory
-OBJS = $(addprefix $(OBJDIR), $(FREERTOS_OBJS) $(FREERTOS_MEMMANG_OBJS) $(FREERTOS_PORT_OBJS) $(APP_OBJS) )
+OBJS = $(addprefix $(OBJDIR), $(FREERTOS_OBJS) $(FREERTOS_MEMMANG_OBJS) $(FREERTOS_PORT_OBJS) $(APP_OBJS) $(NVDLA_OBJS) )
 
 ELF_IMAGE = image.elf
 
@@ -87,7 +92,7 @@ INC_FREERTOS = $(FREERTOS_SRC)include/
 INC_APP = $(APP_SRC)include/
 
 # Complete include flags to be passed to $(CC) where necessary
-INC_FLAGS = $(INCLUDEFLAG)$(INC_FREERTOS) $(INCLUDEFLAG)$(INC_APP) $(INCLUDEFLAG)$(FREERTOS_PORT_SRC)
+INC_FLAGS = $(INCLUDEFLAG)$(INC_FREERTOS) $(INCLUDEFLAG)$(INC_APP) $(INCLUDEFLAG)$(FREERTOS_PORT_SRC) $(INCLUDEFLAG)$(NVDLA_SRC)
 
 
 all: $(OBJDIR) $(ELF_IMAGE)
@@ -124,6 +129,11 @@ $(OBJDIR)%.o : $(APP_SRC)%.S
 	$(CC) $(CFLAG) $(CFLAGS) $(INC_FLAGS) $< $(OFLAG) $@
 
 $(OBJDIR)%.o : $(APP_SRC)%.c
+	$(CC) $(CFLAG) $(CFLAGS) $(INC_FLAGS) $< $(OFLAG) $@
+
+# NVDLA application
+
+$(OBJDIR)%.o : $(NVDLA_SRC)%.c
 	$(CC) $(CFLAG) $(CFLAGS) $(INC_FLAGS) $< $(OFLAG) $@
 
 run:
