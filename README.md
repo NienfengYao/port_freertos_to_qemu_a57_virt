@@ -11,6 +11,10 @@
   * printf() works.
   * Basic examples work.
     *  Queue, Mutex, Binary Semaphore and software timer.
+* Branch: nvdla_test
+  * Porting vp/tests/nvdla_bdma_mmio Successfully.
+  * Porting kernel driver. (Halt)
+    * We need drm.ko and opendla.ko. But drm.ko is prebuilt, there is no source code.
     
 # Issues
 * GDB can't step into main() if missing lable: magic_label in start.S (commit 0ddf0c433d759b763c84106ee4810e5f809a78c3)
